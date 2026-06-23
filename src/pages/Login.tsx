@@ -11,7 +11,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>AI Portfolio Insights</h1>
+        <h1>CXO AI Perf Dashboard</h1>
         <p className="subtitle">Sign in with your company SSO to continue</p>
         <div className="role-buttons">
           {roles.map(({ role, label, desc }) => (

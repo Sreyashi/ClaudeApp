@@ -7,7 +7,7 @@ export default function Layout() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand">AI Portfolio Insights</div>
+        <div className="brand">CXO AI Perf Dashboard</div>
         <nav className="nav">
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
             Project Predictions
