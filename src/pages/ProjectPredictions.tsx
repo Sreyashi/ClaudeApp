@@ -8,18 +8,70 @@ function daysBetween(a: string, b: string) {
   return Math.round((new Date(b).getTime() - new Date(a).getTime()) / (1000 * 60 * 60 * 24));
 }
 
+function FundingDecisionPanel({
+  project,
+  canAct,
+  onDecide,
+}: {
+  project: AIProject;
+  canAct: boolean;
+  onDecide: (decision: 'approved' | 'rejected', reason?: string) => void;
+}) {
+  const [reason, setReason] = useState('');
+  const fr = project.fundingRequest;
+  if (!fr) return null;
+
+  return (
+    <div className="funding-panel">
+      <h4>Remaining Funding Request</h4>
+      <div className="funding-summary">
+        <span className="funding-amount">${(fr.amount / 1000).toFixed(0)}k</span>
+        <span className="funding-desc">{fr.description}</span>
+      </div>
+
+      {fr.status === 'pending' ? (
+        canAct ? (
+          <div className="funding-decision">
+            <input
+              type="text"
+              placeholder="Reason for decision (optional)"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+            <div className="funding-buttons">
+              <button className="approve-btn" onClick={() => onDecide('approved', reason.trim() || undefined)}>
+                Approve remaining funding
+              </button>
+              <button className="reject-btn" onClick={() => onDecide('rejected', reason.trim() || undefined)}>
+                Reject remaining funding
+              </button>
+            </div>
+          </div>
+        ) : (
+          <span className="funding-status pending">Awaiting CFO decision</span>
+        )
+      ) : (
+        <div className={`funding-resolved ${fr.status}`}>
+          <span className="funding-status">
+            {fr.status === 'approved' ? 'Approved' : 'Rejected'} by {fr.decidedBy} on {fr.decidedAt}
+          </span>
+          {fr.decisionReason && <p className="funding-reason">"{fr.decisionReason}"</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProjectCard({
   project,
   canAct,
-  onReject,
-  onApprove,
+  onDecideFunding,
   onAsk,
   questionCount,
 }: {
   project: AIProject;
   canAct: boolean;
-  onReject: () => void;
-  onApprove: () => void;
+  onDecideFunding: (decision: 'approved' | 'rejected', reason?: string) => void;
   onAsk: (q: string) => void;
   questionCount: number;
 }) {
@@ -57,11 +109,17 @@ function ProjectCard({
           <span className="stat-value">{project.delayRiskScore}/100</span>
         </div>
         <div>
-          <span className="stat-label">Budget</span>
-          <span className={`stat-value budget-${project.budgetStatus}`}>
-            ${(project.budget / 1000).toFixed(0)}k · {project.budgetStatus}
-          </span>
+          <span className="stat-label">Committed budget</span>
+          <span className="stat-value">${(project.budget / 1000).toFixed(0)}k</span>
         </div>
+        {project.fundingRequest && (
+          <div>
+            <span className="stat-label">Funding decision</span>
+            <span className={`stat-value budget-${project.fundingRequest.status}`}>
+              {project.fundingRequest.status}
+            </span>
+          </div>
+        )}
       </div>
 
       {expanded && (
@@ -101,19 +159,7 @@ function ProjectCard({
             )}
           </div>
 
-          {canAct && project.status !== 'on-time' && (
-            <div className="budget-actions">
-              {project.budgetStatus !== 'rejected' ? (
-                <button className="reject-btn" onClick={onReject}>
-                  Reject future budget
-                </button>
-              ) : (
-                <button className="approve-btn" onClick={onApprove}>
-                  Re-approve budget
-                </button>
-              )}
-            </div>
-          )}
+          <FundingDecisionPanel project={project} canAct={canAct} onDecide={onDecideFunding} />
         </div>
       )}
     </div>
@@ -122,7 +168,7 @@ function ProjectCard({
 
 export default function ProjectPredictions() {
   const { user } = useAuth();
-  const { projects, questions, rejectBudget, approveBudget, askQuestion } = useProjectStore();
+  const { projects, questions, decideFunding, askQuestion } = useProjectStore();
   const canAct = user?.role === 'CFO';
 
   const summary = {
@@ -136,7 +182,7 @@ export default function ProjectPredictions() {
       <h1>AI Project Delivery Predictions</h1>
       <p className="page-subtitle">
         {canAct
-          ? 'Review delay-prone projects, ask clarifying questions, and manage future budget approvals.'
+          ? 'Review delay-prone projects, ask clarifying questions, and approve or reject remaining funding requests.'
           : 'Portfolio-wide view of predicted on-time / delay status across active AI projects.'}
       </p>
 
@@ -152,8 +198,9 @@ export default function ProjectPredictions() {
             key={p.id}
             project={p}
             canAct={canAct}
-            onReject={() => rejectBudget(p.id)}
-            onApprove={() => approveBudget(p.id)}
+            onDecideFunding={(decision, reason) =>
+              decideFunding(p.id, decision, `${user?.name} (${user?.role})`, reason)
+            }
             onAsk={(q) => askQuestion(p.id, `${user?.name} (${user?.role})`, q)}
             questionCount={questions.filter((q) => q.projectId === p.id).length}
           />

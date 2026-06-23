@@ -6,15 +6,27 @@ export function useProjectStore() {
   const [projects, setProjects] = useState<AIProject[]>(initialProjects);
   const [questions, setQuestions] = useState<ClarifyingQuestion[]>(initialQuestions);
 
-  function rejectBudget(projectId: string) {
+  function decideFunding(
+    projectId: string,
+    decision: 'approved' | 'rejected',
+    decidedBy: string,
+    reason?: string
+  ) {
     setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, budgetStatus: 'rejected' } : p))
-    );
-  }
-
-  function approveBudget(projectId: string) {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, budgetStatus: 'approved' } : p))
+      prev.map((p) =>
+        p.id === projectId && p.fundingRequest
+          ? {
+              ...p,
+              fundingRequest: {
+                ...p.fundingRequest,
+                status: decision,
+                decidedBy,
+                decidedAt: new Date().toISOString().slice(0, 10),
+                decisionReason: reason,
+              },
+            }
+          : p
+      )
     );
   }
 
@@ -29,5 +41,5 @@ export function useProjectStore() {
     setQuestions((prev) => [newQuestion, ...prev]);
   }
 
-  return { projects, questions, rejectBudget, approveBudget, askQuestion };
+  return { projects, questions, decideFunding, askQuestion };
 }

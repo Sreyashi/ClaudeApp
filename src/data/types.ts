@@ -1,11 +1,22 @@
 export type ProjectStatus = 'on-time' | 'at-risk' | 'delayed';
 
+export type FundingDecisionStatus = 'pending' | 'approved' | 'rejected';
+
+export interface FundingRequest {
+  id: string;
+  amount: number;
+  description: string;
+  status: FundingDecisionStatus;
+  decidedBy?: string;
+  decidedAt?: string;
+  decisionReason?: string;
+}
+
 export interface AIProject {
   id: string;
   name: string;
   owner: string;
   budget: number;
-  budgetStatus: 'approved' | 'rejected' | 'pending';
   startDate: string;
   predictedCompletion: string;
   plannedCompletion: string;
@@ -13,6 +24,8 @@ export interface AIProject {
   delayRiskScore: number; // 0-100
   delayReason?: string;
   milestones: { name: string; done: boolean }[];
+  /** Remaining/future funding tranche awaiting CFO decision, once a delay surfaces */
+  fundingRequest?: FundingRequest;
 }
 
 export interface ClarifyingQuestion {

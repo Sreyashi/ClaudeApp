@@ -322,6 +322,73 @@ body {
   font-weight: 600;
 }
 
+.funding-panel {
+  margin-top: 18px;
+  border-top: 1px solid #eef1f5;
+  padding-top: 14px;
+}
+
+.funding-panel h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.funding-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.funding-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1d29;
+}
+
+.funding-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.funding-decision input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d8dee8;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.funding-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.funding-status {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.funding-status.pending {
+  color: #d97706;
+}
+
+.funding-resolved.approved .funding-status {
+  color: #16a34a;
+}
+
+.funding-resolved.rejected .funding-status {
+  color: #dc2626;
+}
+
+.funding-reason {
+  font-size: 13px;
+  color: #475569;
+  font-style: italic;
+  margin: 6px 0 0;
+}
+
 .reject-btn {
   background: #dc2626;
   color: #fff;
