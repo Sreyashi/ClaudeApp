@@ -15,6 +15,9 @@ export default function Layout() {
           <NavLink to="/agent-performance" className={({ isActive }) => (isActive ? 'active' : '')}>
             Agent Performance
           </NavLink>
+          <NavLink to="/evals" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Evals
+          </NavLink>
         </nav>
         <div className="user-info">
           <span className="user-name">{user?.name}</span>

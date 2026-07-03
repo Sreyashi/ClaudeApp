@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import ProjectPredictions from './pages/ProjectPredictions';
 import AgentPerformance from './pages/AgentPerformance';
+import Evals from './pages/Evals';
 import './App.css';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -28,6 +29,7 @@ function Routed() {
       >
         <Route index element={<ProjectPredictions />} />
         <Route path="agent-performance" element={<AgentPerformance />} />
+        <Route path="evals" element={<Evals />} />
       </Route>
     </Routes>
   );
