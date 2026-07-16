@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sreyashi Dey Chaki — Staff Product Manager</title>
+<meta name="description" content="Sreyashi Dey Chaki — Staff Product Manager, AI & Growth. 10+ years driving growth, payments, and AI product strategy at Walmart, project44, Cisco and Honeywell." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0e17'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' fill='%2300d4ff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg-alt: #0f1420;
+    --card: #131926;
+    --card-border: #1f2837;
+    --text: #e9edf3;
+    --text-dim: #8b96a8;
+    --text-dimmer: #5c6779;
+    --accent: #00d4ff;
+    --accent-dim: rgba(0, 212, 255, 0.12);
+    --amber: #ffb84d;
+    --amber-dim: rgba(255, 184, 77, 0.14);
+    --maxw: 1080px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  ::selection { background: var(--accent); color: #05070c; }
+
+  /* ---------- NAV ---------- */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 14, 23, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  nav {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    font-size: 17px;
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    position: relative;
+    padding: 4px 0;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-links a.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .nav-toggle span {
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: 0.25s;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 110px 0 90px;
+    position: relative;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -80px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 62px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin-bottom: 18px;
+  }
+
+  .hero .title {
+    font-size: clamp(17px, 2.4vw, 22px);
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+  .hero .title strong { color: var(--text); font-weight: 600; }
+
+  .hero .pitch {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 620px;
+    margin-bottom: 36px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14.5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #05070c;
+  }
+  .btn-primary:hover { box-shadow: 0 0 24px var(--accent-dim); transform: translateY(-1px); }
+  .btn-outline {
+    border-color: var(--card-border);
+    color: var(--text);
+    background: transparent;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    color: var(--text-dimmer);
+    font-size: 13.5px;
+  }
+  .meta-row span { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* ---------- STATS ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--card-border);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .stat {
+    background: var(--card);
+    padding: 24px 18px;
+    text-align: center;
+  }
+  .stat .num {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .stat .label {
+    font-size: 12px;
+    color: var(--text-dimmer);
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section { padding: 90px 0; }
+  .section-head { margin-bottom: 48px; }
+  .section-tag {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-head h2 {
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .section-head p {
+    color: var(--text-dim);
+    margin-top: 12px;
+    max-width: 560px;
+  }
+
+  .alt-bg { background: var(--bg-alt); }
+
+  /* ---------- CASE STUDIES ---------- */
+  .case-grid { display: flex; flex-direction: column; gap: 18px; }
+
+  .case-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .case-card:hover { border-color: #2a3648; }
+  .case-card.live { border-color: rgba(255, 184, 77, 0.35); }
+  .case-card.live:hover { border-color: var(--amber); }
+
+  .case-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 26px 26px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    color: var(--text);
+  }
+
+  .case-toggle-left { flex: 1; min-width: 0; }
+
+  .case-num {
+    font-size: 12.5px;
+    color: var(--text-dimmer);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--amber-dim);
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 184, 77, 0.35);
+  }
+  .live-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 8px var(--amber);
+  }
+
+  .case-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .case-sub {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .case-chevron {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, border-color 0.2s;
+    margin-top: 2px;
+  }
+  .case-card[data-open="true"] .case-chevron { transform: rotate(45deg); border-color: var(--accent); }
+
+  .case-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .case-body-inner {
+    padding: 0 26px 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .case-block .block-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .case-card.live .case-block .block-label { color: var(--amber); }
+  .case-block p { font-size: 14.5px; color: var(--text-dim); }
+
+  .case-tags {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--card-border);
+    margin-top: 4px;
+  }
+
+  .case-links {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .case-links a {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--amber);
+    border: 1px solid rgba(255, 184, 77, 0.35);
+    padding: 8px 16px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .case-links a:hover { background: var(--amber-dim); }
+
+  .tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .skill-group h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dimmer);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 9px; }
+  .pill {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    border-left: 2px solid var(--card-border);
+  }
+  .tl-item {
+    position: relative;
+    padding-bottom: 40px;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -38px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+  .tl-item.current::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-dim);
+  }
+  .tl-date {
+    font-size: 12.5px;
+    color: var(--text-dimmer);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .tl-role { font-size: 17px; font-weight: 700; }
+  .tl-role .co { color: var(--accent); }
+  .tl-current-tag {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 2px 9px;
+    border-radius: 20px;
+    vertical-align: middle;
+  }
+
+  /* ---------- EDUCATION ---------- */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  .edu-card .deg { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .edu-card .school { color: var(--accent); font-size: 14.5px; font-weight: 600; margin-bottom: 4px; }
+  .edu-card .year { color: var(--text-dimmer); font-size: 13px; }
+
+  /* ---------- CONTACT ---------- */
+  .contact-box {
+    background: linear-gradient(135deg, var(--card) 0%, var(--bg-alt) 100%);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .contact-box h2 {
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .contact-box p {
+    color: var(--text-dim);
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  footer {
+    text-align: center;
+    padding: 36px 0 50px;
+    color: var(--text-dimmer);
+    font-size: 13px;
+  }
+
+  /* ---------- ANIMATIONS ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 860px) {
+    .skills-grid { grid-template-columns: 1fr; gap: 28px; }
+    .case-body-inner { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .edu-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    .nav-links {
+      position: fixed;
+      top: 61px;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      flex-direction: column;
+      gap: 0;
+      border-bottom: 1px solid var(--card-border);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .nav-links.open { max-height: 400px; }
+    .nav-links li { width: 100%; }
+    .nav-links a { display: block; padding: 16px 28px; border-top: 1px solid var(--card-border); }
+    .nav-toggle { display: flex; }
+    .hero { padding: 70px 0 60px; }
+    section { padding: 64px 0; }
+    .case-toggle { padding: 20px; }
+    .case-body-inner { padding: 0 20px 24px; }
+    .contact-box { padding: 44px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#top" class="logo">Sreyashi<span>.</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Open to Staff / Principal PM roles</div>
+      <h1>Sreyashi Dey Chaki</h1>
+      <p class="title"><strong>Staff Product Manager</strong> — AI &amp; Growth · 10+ Years</p>
+      <p class="pitch">I turn ambiguous zero-to-one problems into revenue-protecting, growth-driving products — from AI-powered supply chain platforms to a solo-built agentic app validated by clinical therapists.</p>
+      <div class="hero-cta">
+        <a href="#work" class="btn btn-primary">View Case Studies</a>
+        <a href="#contact" class="btn btn-outline">Get In Touch</a>
+      </div>
+      <div class="meta-row">
+        <span>📍 Bengaluru, India</span>
+        <span>✉️ deychaki.sreyashi@gmail.com</span>
+        <span>📱 +91 96321 22966</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section style="padding-top:0" class="wrap reveal">
+    <div class="stats">
+      <div class="stat"><div class="num">$80M+</div><div class="label">Revenue Protected</div></div>
+      <div class="stat"><div class="num">450K+</div><div class="label">Subscribers Acquired</div></div>
+      <div class="stat"><div class="num">$12M+</div><div class="label">Losses Prevented (AI)</div></div>
+      <div class="stat"><div class="num">10+</div><div class="label">Years in Product</div></div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section id="work" class="alt-bg">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">Selected Work</div>
+        <h2>Case Studies</h2>
+        <p>Five products, one throughline: find where users are dropping off or where risk is hiding, and ship the thing that fixes it.</p>
+      </div>
+
+      <div class="case-grid" id="caseGrid"></div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">Toolkit</div>
+        <h2>Skills &amp; Tools</h2>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-group">
+          <h3>Product</h3>
+          <div class="pill-row">
+            <span class="pill">Product Vision &amp; Strategy</span>
+            <span class="pill">Multi-year Roadmap</span>
+            <span class="pill">A/B Experimentation</span>
+            <span class="pill">GTM Strategy</span>
+            <span class="pill">Growth &amp; Funnel Optimisation</span>
+            <span class="pill">OKRs</span>
+            <span class="pill">Cross Stakeholder Management</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Technical</h3>
+          <div class="pill-row">
+            <span class="pill">RAG &amp; LLM Integration</span>
+            <span class="pill">Prompt Engineering</span>
+            <span class="pill">AI Evals (Arize AX)</span>
+            <span class="pill">Figma</span>
+            <span class="pill">SaaS</span>
+            <span class="pill">Android</span>
+            <span class="pill">iOS</span>
+            <span class="pill">GitHub</span>
+            <span class="pill">SAP Hybris</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Tools</h3>
+          <div class="pill-row">
+            <span class="pill">Claude</span>
+            <span class="pill">Gemini</span>
+            <span class="pill">Vercel</span>
+            <span class="pill">Arize AX</span>
+            <span class="pill">Lovable</span>
+            <span class="pill">Bolt</span>
+            <span class="pill">Google Analytics</span>
+            <span class="pill">Mixpanel</span>
+            <span class="pill">Tableau</span>
+            <span class="pill">Jira</span>
+            <span class="pill">Figma</span>
+            <span class="pill">Notion</span>
+            <span class="pill">SQL</span>
+            <span class="pill">Excel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="alt-bg">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">Career</div>
+        <h2>Experience</h2>
+      </div>
+      <div class="timeline reveal" id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="section-tag">Background</div>
+        <h2>Education</h2>
+      </div>
+      <div class="edu-grid reveal">
+        <div class="edu-card">
+          <div class="deg">Executive MBA</div>
+          <div class="school">IIM Kozhikode</div>
+          <div class="year">2021</div>
+        </div>
+        <div class="edu-card">
+          <div class="deg">B.Tech</div>
+          <div class="school">WBUT, West Bengal</div>
+          <div class="year">2007</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="alt-bg">
+    <div class="wrap">
+      <div class="contact-box reveal">
+        <h2>Let's build something.</h2>
+        <p>Open to Staff / Principal PM conversations — AI products, growth, and 0-to-1 builds especially welcome.</p>
+        <div class="contact-links">
+          <a class="btn btn-primary" href="mailto:deychaki.sreyashi@gmail.com">✉️ Email Me</a>
+          <a class="btn btn-outline" href="https://linkedin.com/in/sreyasshideychaki" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn btn-outline" href="https://github.com/Sreyashi/ADHD-AgenticApp" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Sreyashi Dey Chaki · Built with a lot of coffee and a little Claude.</div>
+</footer>
+
+<script>
+(function () {
+  var cases = [
+    {
+      num: "01",
+      live: false,
+      title: "Payments Integration",
+      sub: "Walmart South Africa · Payments, Checkout, Strategy",
+      problem: "Customers were abandoning checkout because preferred local payment methods weren't available, leaving revenue on the table in a price-sensitive market.",
+      role: "Led the strategic decision to integrate Capitec Pay and BNPL provider Payflex directly into checkout, coordinating across payments, engineering and risk teams.",
+      outcome: "Protected $80M in revenue and sustained a 7% conversion rate through the rollout.",
+      tags: ["Payments", "Checkout", "Strategy"]
+    },
+    {
+      num: "02",
+      live: false,
+      title: "Membership Growth",
+      sub: "Walmart Canada &amp; Mexico · Growth, Funnel Optimisation, B2C",
+      problem: "Membership acquisition had stagnated across two major markets despite healthy underlying traffic.",
+      role: "Owned end-to-end membership growth strategy — lifecycle optimisation, funnel redesign, and behavioural segmentation to target the right offer to the right user.",
+      outcome: "Acquired 294K+ new subscribers across both markets.",
+      tags: ["Growth", "Funnel Optimisation", "B2C"]
+    },
+    {
+      num: "03",
+      live: false,
+      title: "AI Disruptor Navigator",
+      sub: "project44 · AI, B2B, Enterprise, Supply Chain",
+      problem: "Enterprise retailers had no proactive visibility into shipment disruptions until they had already become customer-facing problems.",
+      role: "Led design and delivery of an AI-powered predictive disruption platform for 40+ enterprise retailers, including Costco and Home Depot.",
+      outcome: "Prevented $12M+ in potential logistics losses while processing 7M–10M shipments per month.",
+      tags: ["AI", "B2B", "Enterprise", "Supply Chain"]
+    },
+    {
+      num: "04",
+      live: false,
+      title: "Cart &amp; Checkout",
+      sub: "Walmart South Africa · E-commerce, Experimentation, Growth",
+      problem: "A high cart abandonment rate was directly hurting revenue, especially heading into the highest-stakes retail week of the year.",
+      role: "Owned the Cart &amp; Checkout experience end-to-end and ran structured A/B experimentation through Black Friday.",
+      outcome: "Reduced cart abandonment by 7% and delivered an 8% incremental Black Friday sales uplift.",
+      tags: ["E-commerce", "Experimentation", "Growth"]
+    },
+    {
+      num: "05",
+      live: true,
+      title: "ADHD Agentic App",
+      sub: "Live AI Project · AI, 0-to-1, Agentic, Healthcare",
+      problem: "Parents of autistic and ADHD children had no structured tool to track behaviour patterns over time and share meaningful data with therapists.",
+      role: "Ideated, designed, and shipped end-to-end — solo — using Claude AI and Vercel, from concept to a working agentic product.",
+      outcome: "10 active beta users, validated with 5 clinical therapists in Bengaluru.",
+      tags: ["AI", "0-to-1", "Agentic", "Healthcare"],
+      links: [
+        { label: "Live Product ↗", href: "https://adhd-agentic-app.vercel.app" },
+        { label: "GitHub ↗", href: "https://github.com/Sreyashi/ADHD-AgenticApp" }
+      ]
+    }
+  ];
+
+  var grid = document.getElementById("caseGrid");
+  cases.forEach(function (c, i) {
+    var card = document.createElement("div");
+    card.className = "case-card" + (c.live ? " live" : "");
+    card.setAttribute("data-open", "false");
+
+    var tagsHtml = c.tags.map(function (t) { return '<span class="tag">' + t + '</span>'; }).join("");
+    var linksHtml = c.links ? '<div class="case-links">' + c.links.map(function (l) {
+      return '<a href="' + l.href + '" target="_blank" rel="noopener">' + l.label + '</a>';
+    }).join("") + '</div>' : "";
+
+    card.innerHTML =
+      '<button class="case-toggle" aria-expanded="false">' +
+        '<div class="case-toggle-left">' +
+          '<div class="case-num">' + c.num + (c.live ? '<span class="live-badge">Live Product</span>' : '') + '</div>' +
+          '<div class="case-title">' + c.title + '</div>' +
+          '<div class="case-sub">' + c.sub + '</div>' +
+        '</div>' +
+        '<div class="case-chevron">+</div>' +
+      '</button>' +
+      '<div class="case-body">' +
+        '<div class="case-body-inner">' +
+          '<div class="case-block"><div class="block-label">Problem</div><p>' + c.problem + '</p></div>' +
+          '<div class="case-block"><div class="block-label">My Role</div><p>' + c.role + '</p></div>' +
+          '<div class="case-block"><div class="block-label">Outcome</div><p>' + c.outcome + '</p></div>' +
+          '<div class="case-tags">' + tagsHtml + '</div>' +
+          linksHtml +
+        '</div>' +
+      '</div>';
+
+    var toggle = card.querySelector(".case-toggle");
+    var body = card.querySelector(".case-body");
+
+    toggle.addEventListener("click", function () {
+      var isOpen = card.getAttribute("data-open") === "true";
+      var nowOpen = !isOpen;
+      card.setAttribute("data-open", String(nowOpen));
+      toggle.setAttribute("aria-expanded", String(nowOpen));
+      body.style.maxHeight = nowOpen ? body.scrollHeight + "px" : "0px";
+    });
+
+    grid.appendChild(card);
+
+    if (i === 0) {
+      card.setAttribute("data-open", "true");
+      toggle.setAttribute("aria-expanded", "true");
+      requestAnimationFrame(function () {
+        body.style.maxHeight = body.scrollHeight + "px";
+      });
+    }
+  });
+
+  window.addEventListener("resize", function () {
+    document.querySelectorAll('.case-card[data-open="true"] .case-body').forEach(function (b) {
+      b.style.maxHeight = b.scrollHeight + "px";
+    });
+  });
+
+  var experience = [
+    { date: "Oct 2025 – Present", role: "Staff PM, AI &amp; B2B Supply Chain", co: "project44", current: true },
+    { date: "Apr 2022 – Oct 2025", role: "Staff PM, Membership, Growth &amp; CX", co: "Walmart Global Tech" },
+    { date: "Dec 2020 – Apr 2022", role: "Senior PM, Web/Mobile Growth", co: "YMediaLabs" },
+    { date: "Aug 2019 – Dec 2020", role: "PM, Platform &amp; Field Adoption", co: "Honeywell" },
+    { date: "Aug 2016 – Jul 2019", role: "PM, Enterprise Platform &amp; CX", co: "Cisco" },
+    { date: "Nov 2014 – Nov 2015", role: "Business Analyst", co: "Capgemini" },
+    { date: "Aug 2010 – May 2014", role: "Technical Lead", co: "GE" },
+    { date: "Jul 2007 – Aug 2010", role: "Software Engineer", co: "Accenture" }
+  ];
+
+  var tl = document.getElementById("timeline");
+  experience.forEach(function (e) {
+    var item = document.createElement("div");
+    item.className = "tl-item" + (e.current ? " current" : "");
+    item.innerHTML =
+      '<div class="tl-date">' + e.date + '</div>' +
+      '<div class="tl-role">' + e.role + ' <span class="co">· ' + e.co + '</span>' + (e.current ? '<span class="tl-current-tag">Current</span>' : '') + '</div>';
+    tl.appendChild(item);
+  });
+
+  // Mobile nav toggle
+  var navToggle = document.getElementById("navToggle");
+  var navLinks = document.getElementById("navLinks");
+  navToggle.addEventListener("click", function () {
+    navLinks.classList.toggle("open");
+  });
+  navLinks.querySelectorAll("a").forEach(function (a) {
+    a.addEventListener("click", function () { navLinks.classList.remove("open"); });
+  });
+
+  // Scroll-spy active nav link
+  var sections = ["work", "skills", "experience", "education", "contact"]
+    .map(function (id) { return document.getElementById(id); })
+    .filter(Boolean);
+  var links = Array.prototype.slice.call(navLinks.querySelectorAll("a"));
+
+  function onScroll() {
+    var pos = window.scrollY + 120;
+    var current = null;
+    sections.forEach(function (s) {
+      if (s.offsetTop <= pos) current = s.id;
+    });
+    links.forEach(function (l) {
+      l.classList.toggle("active", l.getAttribute("href") === "#" + current);
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Reveal-on-scroll
+  var revealEls = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("in"); });
+  }
+})();
+</script>
+
+</body>
+</html>
