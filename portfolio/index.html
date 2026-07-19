@@ -8,17 +8,17 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0e17'/%3E%3Ctext x='50' y='68' font-size='58' font-family='Georgia,serif' fill='%2300d4ff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" />
 <style>
   :root {
-    --bg: #0a0e17;
-    --bg-alt: #0f1420;
-    --card: #131926;
-    --card-border: #1f2837;
-    --text: #e9edf3;
-    --text-dim: #8b96a8;
-    --text-dimmer: #5c6779;
-    --accent: #00d4ff;
-    --accent-dim: rgba(0, 212, 255, 0.12);
-    --amber: #ffb84d;
-    --amber-dim: rgba(255, 184, 77, 0.14);
+    --bg: #ffffff;
+    --bg-alt: #f4f6f9;
+    --card: #ffffff;
+    --card-border: #e1e6ed;
+    --text: #131722;
+    --text-dim: #55606f;
+    --text-dimmer: #8992a0;
+    --accent: #0091c2;
+    --accent-dim: rgba(0, 145, 194, 0.1);
+    --amber: #b45309;
+    --amber-dim: rgba(217, 119, 6, 0.1);
     --maxw: 1080px;
   }
 
@@ -43,14 +43,14 @@
     padding: 0 28px;
   }
 
-  ::selection { background: var(--accent); color: #05070c; }
+  ::selection { background: var(--accent); color: #ffffff; }
 
   /* ---------- NAV ---------- */
   header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10, 14, 23, 0.85);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--card-border);
@@ -197,7 +197,7 @@
   }
   .btn-primary {
     background: var(--accent);
-    color: #05070c;
+    color: #ffffff;
   }
   .btn-primary:hover { box-shadow: 0 0 24px var(--accent-dim); transform: translateY(-1px); }
   .btn-outline {
@@ -277,10 +277,11 @@
     border: 1px solid var(--card-border);
     border-radius: 14px;
     overflow: hidden;
-    transition: border-color 0.2s;
+    box-shadow: 0 1px 3px rgba(19, 23, 34, 0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .case-card:hover { border-color: #2a3648; }
-  .case-card.live { border-color: rgba(255, 184, 77, 0.35); }
+  .case-card:hover { border-color: #c3cbd6; box-shadow: 0 4px 14px rgba(19, 23, 34, 0.08); }
+  .case-card.live { border-color: rgba(180, 83, 9, 0.3); }
   .case-card.live:hover { border-color: var(--amber); }
 
   .case-toggle {
@@ -322,7 +323,7 @@
     text-transform: uppercase;
     padding: 3px 10px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 184, 77, 0.35);
+    border: 1px solid rgba(180, 83, 9, 0.3);
   }
   .live-badge::before {
     content: "";
@@ -402,7 +403,7 @@
     font-size: 13.5px;
     font-weight: 600;
     color: var(--amber);
-    border: 1px solid rgba(255, 184, 77, 0.35);
+    border: 1px solid rgba(180, 83, 9, 0.3);
     padding: 8px 16px;
     border-radius: 7px;
     display: inline-flex;
@@ -416,7 +417,7 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--text-dim);
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-alt);
     border: 1px solid var(--card-border);
     padding: 5px 12px;
     border-radius: 20px;
@@ -441,7 +442,7 @@
     font-size: 13.5px;
     font-weight: 500;
     color: var(--text);
-    background: var(--card);
+    background: var(--bg-alt);
     border: 1px solid var(--card-border);
     padding: 8px 14px;
     border-radius: 8px;
@@ -509,6 +510,7 @@
     border: 1px solid var(--card-border);
     border-radius: 14px;
     padding: 28px;
+    box-shadow: 0 1px 3px rgba(19, 23, 34, 0.06);
   }
   .edu-card .deg { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
   .edu-card .school { color: var(--accent); font-size: 14.5px; font-weight: 600; margin-bottom: 4px; }
