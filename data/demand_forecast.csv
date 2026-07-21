@@ -1,0 +1,22 @@
+forecast_id,batch_id,store_id,sku_id,forecast_window_hours,predicted_demand_units,pre_labeled_expected_demand_units,forecast_confidence,last_60d_avg_daily_demand_units,notes
+FC-001,BAT-001,ST01,SKU02,44,30,32,high,18,Source store's own demand for this batch's SKU over the remaining window
+FC-002,BAT-001,ST02,SKU02,44,100,95,high,55,Destination candidate demand - well above source excess
+FC-003,BAT-002,ST01,SKU01,40,40,38,high,25,Source store's own demand
+FC-004,BAT-002,ST02,SKU01,40,40,42,high,28,Nearer destination candidate (4.2km) - lower demand
+FC-005,BAT-002,ST03,SKU01,40,130,125,high,70,Farther destination candidate still within 10km (7.8km) - much higher demand, should be chosen over nearer ST02
+FC-006,BAT-003,ST01,SKU03,46,25,22,high,15,Source store's own demand
+FC-007,BAT-003,ST02,SKU03,46,15,14,high,10,Nearby candidate (4.2km) - insufficient demand to absorb excess
+FC-008,BAT-003,ST03,SKU03,46,20,18,high,12,Nearby candidate (7.8km) - insufficient demand to absorb excess
+FC-009,BAT-003,ST04,SKU03,46,180,175,high,95,Same-city hero store beyond 10km (22.5km) - only store with enough demand
+FC-010,BAT-004,ST02,SKU04,47,20,55,low,48,Predicted demand far below historical average and pre-labeled expected demand - forecast is unreliable, do not act on it
+FC-011,BAT-005,ST03,SKU05,30,10,9,high,8,Demand exists but is irrelevant - quality gate blocks any transfer regardless
+FC-012,BAT-006,ST01,SKU04,96,85,82,high,20,Shelf life beyond the 48h trigger window - no action needed yet
+FC-013,BAT-007,ST02,SKU01,72,65,60,high,28,Shelf life beyond the 48h trigger window
+FC-014,BAT-008,ST02,SKU02,110,110,105,high,55,Shelf life beyond the 48h trigger window; this batch previously arrived via transfer
+FC-015,BAT-009,ST03,SKU01,85,75,70,high,70,Shelf life beyond the 48h trigger window
+FC-016,BAT-010,ST03,SKU02,60,52,50,high,40,Shelf life beyond the 48h trigger window
+FC-017,BAT-011,ST04,SKU03,120,145,140,high,95,Shelf life beyond the 48h trigger window
+FC-018,BAT-012,ST04,SKU05,90,42,40,high,12,Shelf life beyond the 48h trigger window
+FC-019,BAT-013,ST01,SKU05,52,72,70,high,18,Just above the 48h trigger threshold - not yet in scope
+FC-020,BAT-014,ST02,SKU03,48.5,92,90,high,15,Just above the 48h trigger threshold; demand already covers on-hand so no excess even if triggered
+FC-021,BAT-015,ST03,SKU04,100,58,55,high,20,Shelf life beyond the 48h trigger window

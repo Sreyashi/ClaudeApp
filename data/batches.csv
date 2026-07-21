@@ -1,0 +1,16 @@
+batch_id,sku_id,sku_name,store_id,store_name,manufactured_date,expiry_date,hours_to_expiry_asof_2026-07-21T09:00,on_hand_qty,quality_status,previously_transferred,returned_from_customer
+BAT-001,SKU02,Full Cream Milk 1L,ST01,Store A - Koramangala,2026-07-16T05:00,2026-07-23T05:00,44,120,ok,no,no
+BAT-002,SKU01,Toned Milk 500ml,ST01,Store A - Koramangala,2026-07-16T01:00,2026-07-23T01:00,40,150,ok,no,no
+BAT-003,SKU03,Toned Milk 1L,ST01,Store A - Koramangala,2026-07-16T07:00,2026-07-23T07:00,46,200,ok,no,no
+BAT-004,SKU04,Skimmed Milk 500ml,ST02,Store B - HSR Layout,2026-07-16T08:00,2026-07-23T08:00,47,90,ok,no,no
+BAT-005,SKU05,Flavored Milk 200ml Chocolate,ST03,Store C - BTM Layout,2026-07-15T15:00,2026-07-22T15:00,30,60,temperature_breached,no,yes
+BAT-006,SKU04,Skimmed Milk 500ml,ST01,Store A - Koramangala,2026-07-13T09:00,2026-07-25T09:00,96,80,ok,no,no
+BAT-007,SKU01,Toned Milk 500ml,ST02,Store B - HSR Layout,2026-07-14T09:00,2026-07-24T09:00,72,60,ok,no,no
+BAT-008,SKU02,Full Cream Milk 1L,ST02,Store B - HSR Layout,2026-07-11T23:00,2026-07-25T23:00,110,100,ok,yes,no
+BAT-009,SKU01,Toned Milk 500ml,ST03,Store C - BTM Layout,2026-07-13T20:00,2026-07-24T20:00,85,70,ok,no,no
+BAT-010,SKU02,Full Cream Milk 1L,ST03,Store C - BTM Layout,2026-07-15T21:00,2026-07-23T21:00,60,50,ok,no,no
+BAT-011,SKU03,Toned Milk 1L,ST04,Store D - Whitefield (Hero),2026-07-11T09:00,2026-07-26T09:00,120,140,ok,no,no
+BAT-012,SKU05,Flavored Milk 200ml Chocolate,ST04,Store D - Whitefield (Hero),2026-07-13T15:00,2026-07-25T03:00,90,40,ok,no,no
+BAT-013,SKU05,Flavored Milk 200ml Chocolate,ST01,Store A - Koramangala,2026-07-15T05:00,2026-07-23T13:00,52,70,ok,no,no
+BAT-014,SKU03,Toned Milk 1L,ST02,Store B - HSR Layout,2026-07-15T20:30,2026-07-23T09:30,48.5,90,ok,no,no
+BAT-015,SKU04,Skimmed Milk 500ml,ST03,Store C - BTM Layout,2026-07-13T05:00,2026-07-25T13:00,100,55,ok,no,no

@@ -1,0 +1,11 @@
+log_id,run_date,sku_id,source_store_id,destination_store_id,recommended_qty,human_action,transferred_qty,units_sold,units_expired,forecasted_demand_units,actual_demand_units,forecast_error_units,value_saved_inr,notes
+RL-001,2026-06-02,SKU02,ST03,ST01,35,approved,35,33,2,35,33,2,1485,Slight forecast overestimate; still net positive at roughly INR 45 per unit sold.
+RL-002,2026-05-28,SKU01,ST01,ST03,45,approved,45,0,45,45,50,-5,-650,Approved despite a thin shelf-life-after-arrival margin. All units expired at the destination and the transport cost was wasted. Root cause of the 24-hour-after-arrival rule now enforced in policy.
+RL-003,2026-06-10,SKU04,ST02,ST03,20,rejected,0,0,0,20,18,2,0,Manager rejected - destination was already overstocked on this SKU.
+RL-004,2026-06-18,SKU05,ST01,ST04,30,approved,30,30,0,28,30,-2,1350,Hero-store transfer cleared fully; forecast slightly underestimated demand.
+RL-005,2026-06-25,SKU03,ST04,ST02,50,approved,50,41,9,50,41,9,1845,Forecast overestimated destination demand; 9 units still expired.
+RL-006,2026-07-01,SKU01,ST02,ST01,15,escalated,0,0,0,15,0,0,0,Escalated - forecast confidence was low; manager asked ops to recheck before any transfer decision.
+RL-007,2026-07-05,SKU02,ST01,ST02,38,approved,38,36,2,38,36,2,1620,Clean run, close to forecast.
+RL-008,2026-07-09,SKU04,ST03,ST04,22,approved,22,20,2,22,20,2,900,Minor shrinkage, within tolerance.
+RL-009,2026-07-13,SKU05,ST02,ST01,18,rejected,0,0,0,18,15,3,0,Manager rejected - preferred a same-store markdown instead (out of scope for V1, promotions are no longer a valid alternative).
+RL-010,2026-07-17,SKU03,ST01,ST03,40,approved,40,40,0,37,40,-3,1800,Full sell-through, forecast was slightly conservative.

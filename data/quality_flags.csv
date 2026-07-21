@@ -1,0 +1,4 @@
+flag_id,batch_id,quality_status,flag_reason,flagged_by,flagged_at,returned_from_customer,notes
+QF-001,BAT-005,temperature_breached,Cold-chain temperature log showed a breach above 8C for 40 minutes during last-mile delivery of a returned order,Store Ops - BTM Layout,2026-07-21T07:15,yes,Returned by customer citing item felt warm. Store QC confirmed the breach on inspection. Do not transfer.
+QF-002,BAT-008,ok,Routine QC check - no issues found,Store Ops - HSR Layout,2026-07-20T10:00,no,Passed standard quality check after inbound transfer.
+QF-003,BAT-001,ok,Routine QC check - no issues found,Store Ops - Koramangala,2026-07-21T06:00,no,Passed standard quality check.
