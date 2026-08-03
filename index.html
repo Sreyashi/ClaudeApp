@@ -264,6 +264,7 @@ p { margin: var(--sp-2) 0; }
   <div class="product">Near-Expiry Inventory Transfer Agent</div>
   <input type="password" id="api-key-input" placeholder="Anthropic API key">
   <button type="button" class="btn" id="save-key-btn">Save Key</button>
+  <button type="button" class="btn primary" id="demo-btn" style="display:none;">Start Demo</button>
   <div class="meta" id="topbar-meta"></div>
 </div>
 
@@ -282,7 +283,17 @@ p { margin: var(--sp-2) 0; }
 
   <div class="panel">
     <div class="panel-head">Case Detail</div>
-    <div class="panel-body" id="main-panel-body"></div>
+    <div class="panel-body">
+      <div id="demo-narration" style="display:none; padding: var(--sp-3); background: var(--chip); border-radius: var(--radius-sm); margin-bottom: var(--sp-4); font-size: var(--fs-0); color: var(--ink-2); line-height: 1.6;"></div>
+      <div id="main-panel-body"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">Pending Transfers</div>
+    <div class="panel-body">
+      <div id="pending-transfers"></div>
+    </div>
   </div>
 
   <div class="panel">
@@ -550,6 +561,19 @@ document.getElementById("save-key-btn").addEventListener("click", function() {
   renderMainPanel();
 });
 
+const demoBtnEl = document.getElementById("demo-btn");
+if (localStorage.getItem(API_KEY_STORAGE_KEY)) {
+  demoBtnEl.style.display = "inline-flex";
+}
+
+demoBtnEl.addEventListener("click", function() {
+  if (DEMO_MODE) {
+    exitDemo();
+  } else {
+    startDemo();
+  }
+});
+
 function getDestinationCandidates(batch) {
   const distances = STORE_DISTANCES.filter(function(d) {
     return d.store_a_id === batch.store_id || d.store_b_id === batch.store_id;
@@ -612,6 +636,16 @@ const CASE_STATE = {};
 BATCHES.forEach(function(b) { CASE_STATE[b.batch_id] = { status: "not_run" }; });
 let SELECTED_BATCH_ID = null;
 const RUN_LOG = [];
+const PENDING_TRANSFERS = [];
+let DEMO_MODE = false;
+
+const DEMO_NARRATION = {
+  input: "Batch BAT-001: Full Cream Milk 1L at Store A is 44 hours from expiry. 120 units on hand, with only 25 units forecast demand at source. Agent analyzing...",
+  context: "Agent checks nearby stores and hero stores. ST02 has 15 units demand, ST03 has 20 units demand, ST04 (hero) has 140 units in stock and 180 units forecast demand. Unmet need: ST02 = 0 (15-90), ST03 = 20 (20-0), ST04 = 40 (180-140).",
+  decision: "Agent recommends ST04 hero store due to highest unmet need (40 units). Transfer of 36 units (30% cap) leaves 84 units at source. Transport 55min leaves 36 hours shelf life at destination—above 24hr minimum. Forecast confidence acceptable.",
+  output: "Agent recommends ST04 as destination. Approve to create a pending transfer order, or edit the quantity/destination if preferred.",
+  review: "Manager can approve, edit the details, or escalate if concerned. Once approved, the system creates a pending transfer order that warehouse staff can then physically dispatch and confirm receipt."
+};
 
 function getBatchById(id) {
   return BATCHES.filter(function(b) { return b.batch_id === id; })[0];
@@ -633,6 +667,114 @@ function appendRunLogEntry(batch, parsedFields, humanActionText, actionType) {
     actionType: actionType
   });
   renderRunLog();
+}
+
+/* ═══ DEMO MODE & PENDING TRANSFERS ═══ */
+function renderPendingTransfers() {
+  const container = document.getElementById("pending-transfers");
+  container.innerHTML = "";
+  if (PENDING_TRANSFERS.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.fontSize = "var(--fs-0)";
+    empty.style.color = "var(--ink-3)";
+    empty.textContent = "No pending transfers. Approve a recommendation to create one.";
+    container.appendChild(empty);
+    return;
+  }
+  PENDING_TRANSFERS.forEach(function(pt, idx) {
+    const card = document.createElement("div");
+    card.style.padding = "var(--sp-3)";
+    card.style.marginBottom = "var(--sp-2)";
+    card.style.border = "1px solid var(--line)";
+    card.style.borderRadius = "var(--radius-sm)";
+    card.style.background = "var(--bg-raise)";
+
+    const header = document.createElement("div");
+    header.style.fontWeight = "700";
+    header.style.marginBottom = "var(--sp-2)";
+    header.style.fontSize = "var(--fs-1)";
+    header.innerHTML = escapeHtml(pt.batch_id) + " → " + escapeHtml(pt.destination_store_name);
+    card.appendChild(header);
+
+    const details = document.createElement("div");
+    details.style.fontSize = "var(--fs-0)";
+    details.style.color = "var(--ink-2)";
+    details.innerHTML =
+      "Qty: " + pt.qty + " units | " +
+      "Status: <span style=\"color:var(--warn);\">Awaiting Dispatch</span>";
+    card.appendChild(details);
+
+    const dispatchBtn = document.createElement("button");
+    dispatchBtn.type = "button";
+    dispatchBtn.className = "btn";
+    dispatchBtn.style.marginTop = "var(--sp-2)";
+    dispatchBtn.textContent = "Confirm Dispatch";
+    dispatchBtn.addEventListener("click", function() {
+      pt.status = "Dispatched";
+      pt.dispatch_date = new Date().toLocaleString();
+      renderPendingTransfers();
+    });
+    card.appendChild(dispatchBtn);
+    container.appendChild(card);
+  });
+}
+
+function startDemo() {
+  DEMO_MODE = true;
+  SELECTED_BATCH_ID = "BAT-001";
+  renderCaseList();
+  renderMainPanel();
+  renderDemoNarration("input");
+  document.getElementById("demo-btn").textContent = "Exit Demo";
+  document.getElementById("demo-btn").style.background = "var(--danger)";
+}
+
+function exitDemo() {
+  DEMO_MODE = false;
+  SELECTED_BATCH_ID = null;
+  document.getElementById("demo-narration").style.display = "none";
+  renderMainPanel();
+  document.getElementById("demo-btn").textContent = "Start Demo";
+  document.getElementById("demo-btn").style.background = "";
+}
+
+function renderDemoNarration(stage) {
+  const narrationEl = document.getElementById("demo-narration");
+  if (!DEMO_MODE) {
+    narrationEl.style.display = "none";
+    return;
+  }
+  narrationEl.style.display = "block";
+  const text = DEMO_NARRATION[stage] || "Demo in progress...";
+  narrationEl.innerHTML = "<strong>Demo Stage:</strong> " + escapeHtml(text);
+}
+
+function recordHumanActionWithTransfer(batch, state, action) {
+  recordHumanAction(batch, state, action);
+  if (action.type === "Approved") {
+    const destinationId = state.parsed.fields.recommended_destination_store;
+    const destination = getStoreById(destinationId);
+    PENDING_TRANSFERS.push({
+      batch_id: batch.batch_id,
+      destination_store_id: destinationId,
+      destination_store_name: destination ? destination.store_name : destinationId,
+      qty: state.parsed.fields.recommended_transfer_quantity,
+      status: "Awaiting Dispatch",
+      created_at: new Date().toLocaleString()
+    });
+    renderPendingTransfers();
+    if (DEMO_MODE) {
+      renderDemoNarration("review");
+    }
+  }
+}
+
+function getStoreById(storeId) {
+  for (let i = 0; i < STORE_DISTANCES.length; i++) {
+    if (STORE_DISTANCES[i].store_a_id === storeId) return { store_id: storeId, store_name: STORE_DISTANCES[i].store_a_name };
+    if (STORE_DISTANCES[i].store_b_id === storeId) return { store_id: storeId, store_name: STORE_DISTANCES[i].store_b_name };
+  }
+  return null;
 }
 
 function renderRunLog() {
@@ -963,7 +1105,7 @@ function addReviewGate(container, batch, state) {
   }
 
   approveBtn.addEventListener("click", function() {
-    recordHumanAction(batch, state, { type: "Approved" });
+    recordHumanActionWithTransfer(batch, state, { type: "Approved" });
   });
 
   editBtn.addEventListener("click", function() {
@@ -1237,6 +1379,7 @@ async function runCase(batch) {
     return "error";
   }
 
+  if (DEMO_MODE) renderDemoNarration("input");
   state.status = "running";
   refreshIfSelected(batch.batch_id);
 
@@ -1289,6 +1432,11 @@ async function runCase(batch) {
     state.rawText = text;
     state.parsed = parsed;
     state.humanAction = null;
+    if (DEMO_MODE) {
+      renderDemoNarration("context");
+      setTimeout(function() { renderDemoNarration("decision"); }, 1000);
+      setTimeout(function() { renderDemoNarration("output"); }, 2000);
+    }
     refreshIfSelected(batch.batch_id);
 
     if (!parsed.ok) return "malformed";
@@ -1334,6 +1482,7 @@ renderDemoChips();
 renderCaseList();
 renderMainPanel();
 renderRunLog();
+renderPendingTransfers();
 renderEvalsTable();
 renderScoreboard();
 
