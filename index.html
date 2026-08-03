@@ -307,6 +307,21 @@ p { margin: var(--sp-2) 0; }
   </div>
 </div>
 
+<div class="panel evals-wrap" style="margin-top: var(--sp-4);">
+  <div class="panel-head">Policy & Scope</div>
+  <div class="panel-body">
+    <p style="margin: 0 0 var(--sp-2); font-size: var(--fs-0); color: var(--ink-2);">
+      <strong>Near-Expiry Inventory Transfer Policy:</strong> See <code>policies/transfer_rules.md</code> for all 10 policy sections covering eligibility, ranking, shelf-life rules, quantity caps, forecast validation, quality gates, and escalation triggers.
+    </p>
+    <p style="margin: 0 0 var(--sp-2); font-size: var(--fs-0); color: var(--ink-2);">
+      <strong>Honest Limits & Scope Boundary:</strong> See <code>design/HONEST_LIMITS.md</code> for what the agent refuses to do, what it's transparent about, and what gaps remain. The agent recommends only—a warehouse manager must approve before any transfer order is created. No transfer happens without human sign-off.
+    </p>
+    <p style="margin: 0; font-size: var(--fs-0); color: var(--ink-3);">
+      This is a decision-support tool for warehouse managers, not a decision-maker. Escalate on doubt; refuse without approval.
+    </p>
+  </div>
+</div>
+
 <script>
 
 const MODEL = "claude-sonnet-4-5";
