@@ -1346,15 +1346,13 @@ function renderMainPanel() {
 
   body.appendChild(contextDiv);
 
-  const runBtnWrap = document.createElement("div");
-  const runBtn = makeBtn("Run");
-  if (DEMO_MODE) {
-    runBtn.style.display = "none";
-  } else {
+  if (!DEMO_MODE) {
+    const runBtnWrap = document.createElement("div");
+    const runBtn = makeBtn("Run");
     runBtn.addEventListener("click", function() { runCase(batch); });
+    runBtnWrap.appendChild(runBtn);
+    body.appendChild(runBtnWrap);
   }
-  runBtnWrap.appendChild(runBtn);
-  body.appendChild(runBtnWrap);
 
   /* STAGE 3 — DECISION: what it chose and why */
   body.appendChild(makeStageLabel(3, "Decision"));
