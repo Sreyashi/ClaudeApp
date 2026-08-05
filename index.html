@@ -727,6 +727,14 @@ function startDemo() {
   renderDemoNarration("input");
   document.getElementById("demo-btn").textContent = "Exit Demo";
   document.getElementById("demo-btn").style.background = "var(--danger)";
+
+  // Auto-run the case after UI renders
+  const batch = getBatchById("BAT-001");
+  if (batch) {
+    setTimeout(function() {
+      runCase(batch);
+    }, 800);
+  }
 }
 
 function exitDemo() {
@@ -1340,7 +1348,11 @@ function renderMainPanel() {
 
   const runBtnWrap = document.createElement("div");
   const runBtn = makeBtn("Run");
-  runBtn.addEventListener("click", function() { runCase(batch); });
+  if (DEMO_MODE) {
+    runBtn.style.display = "none";
+  } else {
+    runBtn.addEventListener("click", function() { runCase(batch); });
+  }
   runBtnWrap.appendChild(runBtn);
   body.appendChild(runBtnWrap);
 
