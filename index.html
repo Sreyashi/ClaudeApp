@@ -1400,7 +1400,21 @@ function renderMainPanel() {
 
   if (!DEMO_MODE) {
     const runBtnWrap = document.createElement("div");
+    runBtnWrap.style.marginTop = "var(--sp-4)";
+    runBtnWrap.style.marginBottom = "var(--sp-4)";
+    runBtnWrap.style.padding = "var(--sp-3)";
+    runBtnWrap.style.backgroundColor = "var(--bg-inset)";
+    runBtnWrap.style.borderRadius = "var(--radius-sm)";
+    runBtnWrap.style.borderLeft = "4px solid var(--accent)";
+
     const runBtn = makeBtn("Run");
+    runBtn.style.background = "var(--accent)";
+    runBtn.style.color = "var(--accent-ink)";
+    runBtn.style.border = "none";
+    runBtn.style.cursor = "pointer";
+    runBtn.style.padding = "var(--sp-2) var(--sp-4)";
+    runBtn.style.fontSize = "var(--fs-2)";
+    runBtn.style.fontWeight = "600";
     runBtn.addEventListener("click", function() { runCase(batch); });
     runBtnWrap.appendChild(runBtn);
     body.appendChild(runBtnWrap);
