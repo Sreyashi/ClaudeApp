@@ -683,38 +683,90 @@ function renderPendingTransfers() {
   }
   PENDING_TRANSFERS.forEach(function(pt, idx) {
     const card = document.createElement("div");
-    card.style.padding = "var(--sp-3)";
-    card.style.marginBottom = "var(--sp-2)";
-    card.style.border = "1px solid var(--line)";
+    card.style.padding = "var(--sp-4)";
+    card.style.marginBottom = "var(--sp-3)";
+    card.style.border = "2px solid " + (pt.status === "Received" ? "var(--ok)" : pt.status === "Dispatched" ? "var(--info)" : "var(--warn)");
     card.style.borderRadius = "var(--radius-sm)";
     card.style.background = "var(--bg-raise)";
 
     const header = document.createElement("div");
     header.style.fontWeight = "700";
     header.style.marginBottom = "var(--sp-2)";
-    header.style.fontSize = "var(--fs-1)";
+    header.style.fontSize = "var(--fs-2)";
     header.innerHTML = escapeHtml(pt.batch_id) + " → " + escapeHtml(pt.destination_store_name);
     card.appendChild(header);
+
+    const statusBadge = document.createElement("span");
+    statusBadge.style.display = "inline-block";
+    statusBadge.style.padding = "var(--sp-1) var(--sp-2)";
+    statusBadge.style.fontSize = "var(--fs-0)";
+    statusBadge.style.borderRadius = "var(--radius-sm)";
+    statusBadge.style.fontWeight = "600";
+    if (pt.status === "Received") {
+      statusBadge.style.background = "var(--ok)";
+      statusBadge.style.color = "#fff";
+      statusBadge.textContent = "✓ Received";
+    } else if (pt.status === "Dispatched") {
+      statusBadge.style.background = "var(--info)";
+      statusBadge.style.color = "#fff";
+      statusBadge.textContent = "→ Dispatched";
+    } else {
+      statusBadge.style.background = "var(--warn)";
+      statusBadge.style.color = "#000";
+      statusBadge.textContent = "⏳ Awaiting Dispatch";
+    }
+    card.appendChild(statusBadge);
 
     const details = document.createElement("div");
     details.style.fontSize = "var(--fs-0)";
     details.style.color = "var(--ink-2)";
-    details.innerHTML =
-      "Qty: " + pt.qty + " units | " +
-      "Status: <span style=\"color:var(--warn);\">Awaiting Dispatch</span>";
+    details.style.marginTop = "var(--sp-2)";
+    let detailsText = "Qty: " + pt.qty + " units | Created: " + pt.created_at;
+    if (pt.dispatch_date) detailsText += " | Dispatched: " + pt.dispatch_date;
+    if (pt.received_date) detailsText += " | Received: " + pt.received_date;
+    details.textContent = detailsText;
     card.appendChild(details);
 
-    const dispatchBtn = document.createElement("button");
-    dispatchBtn.type = "button";
-    dispatchBtn.className = "btn";
-    dispatchBtn.style.marginTop = "var(--sp-2)";
-    dispatchBtn.textContent = "Confirm Dispatch";
-    dispatchBtn.addEventListener("click", function() {
-      pt.status = "Dispatched";
-      pt.dispatch_date = new Date().toLocaleString();
-      renderPendingTransfers();
-    });
-    card.appendChild(dispatchBtn);
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.marginTop = "var(--sp-3)";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.gap = "var(--sp-2)";
+
+    if (pt.status === "Awaiting Dispatch") {
+      const dispatchBtn = document.createElement("button");
+      dispatchBtn.type = "button";
+      dispatchBtn.className = "btn";
+      dispatchBtn.style.background = "var(--info)";
+      dispatchBtn.style.color = "#fff";
+      dispatchBtn.style.border = "none";
+      dispatchBtn.style.cursor = "pointer";
+      dispatchBtn.style.padding = "var(--sp-2) var(--sp-3)";
+      dispatchBtn.textContent = "Confirm Dispatch";
+      dispatchBtn.addEventListener("click", function() {
+        pt.status = "Dispatched";
+        pt.dispatch_date = new Date().toLocaleString();
+        renderPendingTransfers();
+      });
+      buttonContainer.appendChild(dispatchBtn);
+    } else if (pt.status === "Dispatched") {
+      const receiveBtn = document.createElement("button");
+      receiveBtn.type = "button";
+      receiveBtn.className = "btn";
+      receiveBtn.style.background = "var(--ok)";
+      receiveBtn.style.color = "#fff";
+      receiveBtn.style.border = "none";
+      receiveBtn.style.cursor = "pointer";
+      receiveBtn.style.padding = "var(--sp-2) var(--sp-3)";
+      receiveBtn.textContent = "Confirm Receipt";
+      receiveBtn.addEventListener("click", function() {
+        pt.status = "Received";
+        pt.received_date = new Date().toLocaleString();
+        renderPendingTransfers();
+      });
+      buttonContainer.appendChild(receiveBtn);
+    }
+
+    card.appendChild(buttonContainer);
     container.appendChild(card);
   });
 }
