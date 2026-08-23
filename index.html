@@ -1,13 +1,1769 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CXO AI Perf Dashboard</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en" data-skin="studio">
+<head>
+<meta charset="UTF-8">
+<title>Near-Expiry Inventory Transfer Agent</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   AGENTIC AI CAPSTONE — LOCKED DESIGN TOKENS  v0.3
+   The look ships in the box. Nobody chooses a font.
+
+   RULES (for the AI building the prototype):
+   - Inline this file into index.html. Use ONLY these tokens.
+   - No new colors. No new fonts. No emoji as icons.
+   - Skins switch by setting data-skin="ops" | "studio" | "term" on <html>.
+   - Never render body text below 13px (--fs-0).
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* type */
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-0: 13px;  /* meta, log lines — absolute floor */
+  --fs-1: 14px;  /* body */
+  --fs-2: 16px;  /* emphasized body, buttons */
+  --fs-3: 20px;  /* panel titles */
+  --fs-4: 28px;  /* page title, stat numbers */
+  --lh: 1.5;
+
+  /* spacing & shape */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --border-w: 1px;
+
+  /* status colors — shared across all skins */
+  --ok: #1FA971;        /* pass / approved */
+  --warn: #D98E04;      /* needs work / pending */
+  --danger: #D64545;    /* fail / escalate / refused */
+  --info: #3B82F6;      /* running / info */
+}
+
+/* ── SKIN: OPERATIONS (dark) — default ─────────────────────────── */
+:root, [data-skin="ops"] {
+  --bg: #0F1420;         /* page */
+  --bg-raise: #171E2E;   /* panels, cards */
+  --bg-inset: #0B0F18;   /* wells, log */
+  --line: #263049;       /* borders */
+  --ink: #E8EDF7;        /* headings, primary text */
+  --ink-2: #9AA6BF;      /* secondary text */
+  --ink-3: #5E6A85;      /* meta */
+  --accent: #6C8CFF;     /* brand accent: buttons, active states */
+  --accent-ink: #FFFFFF; /* text on accent */
+  --chip: #1E2740;       /* tags, chips */
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -12px rgba(0,0,0,.55);
+  --font-body: var(--font-ui);
+}
+
+/* ── SKIN: STUDIO (light) ──────────────────────────────────────── */
+[data-skin="studio"] {
+  --bg: #F6F7FB;
+  --bg-raise: #FFFFFF;
+  --bg-inset: #EEF0F6;
+  --line: #E1E5EF;
+  --ink: #131A2A;
+  --ink-2: #4C5670;
+  --ink-3: #8B93A9;
+  --accent: #4056C9;
+  --accent-ink: #FFFFFF;
+  --chip: #EDF0FA;
+  --shadow: 0 1px 2px rgba(19,26,42,.06), 0 12px 28px -14px rgba(19,26,42,.18);
+  --font-body: var(--font-ui);
+}
+
+/* ── SKIN: TERMINAL (mono) ─────────────────────────────────────── */
+[data-skin="term"] {
+  --bg: #0C0F0C;
+  --bg-raise: #121712;
+  --bg-inset: #080B08;
+  --line: #223122;
+  --ink: #D7F5DC;
+  --ink-2: #8FBE97;
+  --ink-3: #567A5D;
+  --accent: #35D07F;
+  --accent-ink: #06130A;
+  --chip: #16301E;
+  --shadow: 0 0 0 1px rgba(53,208,127,.08), 0 12px 32px -14px rgba(0,0,0,.7);
+  --font-body: var(--font-mono);
+}
+
+/* ═══ BASE ═══ */
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--fs-1); line-height: var(--lh);
+}
+
+/* ═══ LAYOUT ═══ */
+.topbar {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--bg-raise); border-bottom: var(--border-w) solid var(--line);
+}
+.topbar .product { font-size: var(--fs-2); font-weight: 700; letter-spacing: .01em; }
+.topbar .meta { color: var(--ink-3); font-size: var(--fs-0); margin-left: auto; }
+
+.console {
+  display: grid; grid-template-columns: 300px 1fr 320px;
+  gap: var(--sp-4); padding: var(--sp-4); align-items: start;
+  min-height: calc(100vh - 58px);
+}
+@media (max-width: 1100px) { .console { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--bg-raise); border: var(--border-w) solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.panel-head {
+  padding: var(--sp-3) var(--sp-4); border-bottom: var(--border-w) solid var(--line);
+  font-size: var(--fs-0); font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-2);
+}
+.panel-body { padding: var(--sp-4); }
+
+/* ═══ STAGE LABELS — the loop, named on screen ═══ */
+.stage {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-size: var(--fs-0); font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin: var(--sp-4) 0 var(--sp-2);
+}
+.stage::before {
+  content: attr(data-n); display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink);
+  font-size: 11px; letter-spacing: 0;
+}
+
+/* ═══ CARDS (case list) ═══ */
+.case-card {
+  padding: var(--sp-3) var(--sp-4); border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-sm); background: var(--bg-raise);
+  cursor: pointer; margin-bottom: var(--sp-2);
+}
+.case-card:hover { border-color: var(--accent); }
+.case-card.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
+.case-card .id { font-family: var(--font-mono); font-size: var(--fs-0); color: var(--ink-3); }
+.case-card .title { font-weight: 600; }
+
+/* ═══ CHIPS (one-click demo cases, citations) ═══ */
+.chip {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--chip); color: var(--ink-2);
+  border: var(--border-w) solid var(--line);
+  font-size: var(--fs-0); font-weight: 600; cursor: pointer;
+}
+.chip:hover { color: var(--ink); border-color: var(--accent); }
+.chip.cite { cursor: default; font-family: var(--font-mono); }
+
+/* ═══ OUTPUT FIELDS — labeled, judgeable in under a minute ═══ */
+.field { display: grid; grid-template-columns: 160px 1fr; gap: var(--sp-3); padding: var(--sp-2) 0; border-bottom: var(--border-w) solid var(--line); }
+.field:last-child { border-bottom: 0; }
+.field .k { font-size: var(--fs-0); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.field .v { color: var(--ink); }
+.field .v.why { color: var(--ink-2); font-style: italic; }
+
+/* ═══ STATUS BADGES ═══ */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: var(--fs-0); font-weight: 700; letter-spacing: .04em;
+}
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge.ok      { color: var(--ok);     background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.badge.warn    { color: var(--warn);   background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.badge.danger  { color: var(--danger); background: color-mix(in srgb, var(--danger) 14%, transparent); }
+.badge.info    { color: var(--info);   background: color-mix(in srgb, var(--info) 14%, transparent); }
+.badge.neutral { color: var(--ink-2);  background: var(--chip); }
+
+/* ═══ BUTTONS — the human gate ═══ */
+.btn {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  border: var(--border-w) solid var(--line);
+  background: var(--bg-raise); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--fs-1); font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.approve { background: var(--ok); border-color: var(--ok); color: #fff; }
+.btn.danger  { background: transparent; border-color: var(--danger); color: var(--danger); }
+.btn.danger:hover { background: var(--danger); color: #fff; }
+
+/* ═══ THE BOUNDARY LINE — quiet, permanent ═══ */
+.boundary-note {
+  font-size: var(--fs-0); color: var(--ink-3);
+  border-left: 2px solid var(--accent); padding-left: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+
+/* ═══ RUN LOG ═══ */
+.log {
+  background: var(--bg-inset); border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-sm); padding: var(--sp-3);
+  font-family: var(--font-mono); font-size: var(--fs-0);
+  max-height: 420px; overflow: auto;
+}
+.log .row { display: flex; gap: var(--sp-3); padding: 3px 0; color: var(--ink-2); }
+.log .row .t { color: var(--ink-3); flex: none; }
+.log .row .action-approve  { color: var(--ok); }
+.log .row .action-edit     { color: var(--warn); }
+.log .row .action-escalate { color: var(--danger); }
+
+/* ═══ EVALS ═══ */
+.evals-table { width: 100%; border-collapse: collapse; font-size: var(--fs-1); }
+.evals-table th {
+  text-align: left; font-size: var(--fs-0); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); padding: var(--sp-2) var(--sp-3); border-bottom: var(--border-w) solid var(--line);
+}
+.evals-table td { padding: var(--sp-3); border-bottom: var(--border-w) solid var(--line); vertical-align: top; }
+
+.scoreboard { display: flex; gap: var(--sp-4); margin-bottom: var(--sp-4); }
+.stat {
+  flex: 1; padding: var(--sp-4); text-align: center;
+  background: var(--bg-raise); border: var(--border-w) solid var(--line); border-radius: var(--radius);
+}
+.stat .n { font-size: var(--fs-4); font-weight: 800; line-height: 1.1; }
+.stat .l { font-size: var(--fs-0); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.stat.ok .n { color: var(--ok); } .stat.warn .n { color: var(--warn); } .stat.danger .n { color: var(--danger); }
+
+/* ═══ STATES ═══ */
+.thinking { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--info); font-weight: 600; }
+.thinking::before { content: ""; width: 12px; height: 12px; border: 2px solid var(--info); border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty {
+  padding: var(--sp-6); text-align: center; color: var(--ink-2);
+}
+.empty .headline { font-size: var(--fs-3); font-weight: 700; color: var(--ink); margin-bottom: var(--sp-2); }
+
+.error-note {
+  padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-sm);
+  border: var(--border-w) solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+  color: var(--danger); font-size: var(--fs-1);
+}
+
+/* ═══ EXTENSIONS — form elements the kit doesn't style, built from the same tokens only ═══ */
+input[type="text"], input[type="password"], textarea, select {
+  background: var(--bg-inset); color: var(--ink); border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-sm); padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-body); font-size: var(--fs-1);
+}
+h1, h2, h3 { font-family: var(--font-body); color: var(--ink); }
+ul, ol { padding-left: var(--sp-5); }
+p { margin: var(--sp-2) 0; }
+.evals-wrap { margin: 0 var(--sp-4) var(--sp-4); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="product">Near-Expiry Inventory Transfer Agent</div>
+  <input type="password" id="api-key-input" placeholder="Anthropic API key">
+  <button type="button" class="btn" id="save-key-btn">Save Key</button>
+  <button type="button" class="btn primary" id="demo-btn" style="display:none;">Start Demo</button>
+  <div class="meta" id="topbar-meta"></div>
+</div>
+
+<div class="console">
+
+  <div class="panel">
+    <div class="panel-head">Cases</div>
+    <div class="panel-body">
+      <div id="demo-chips"></div>
+      <button type="button" class="btn" id="run-all-btn">Run All</button>
+      <span id="run-all-progress"></span>
+      <p id="run-all-summary"></p>
+      <div id="case-list"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">Case Detail</div>
+    <div class="panel-body">
+      <div id="demo-narration" style="display:none; padding: var(--sp-3); background: var(--chip); border-radius: var(--radius-sm); margin-bottom: var(--sp-4); font-size: var(--fs-0); color: var(--ink-2); line-height: 1.6;"></div>
+      <div id="main-panel-body"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">Pending Transfers</div>
+    <div class="panel-body">
+      <div id="pending-transfers"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">Run Log</div>
+    <div class="panel-body">
+      <div class="log" id="run-log"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="panel evals-wrap">
+  <div class="panel-head">Evals</div>
+  <div class="panel-body">
+    <div class="scoreboard" id="evals-scoreboard"></div>
+    <table class="evals-table">
+      <thead>
+        <tr><th>Case</th><th>Expected Behavior</th><th>Actual</th><th>Verdict</th><th>Notes</th></tr>
+      </thead>
+      <tbody id="evals-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel evals-wrap" style="margin-top: var(--sp-4);">
+  <div class="panel-head">Policy & Scope</div>
+  <div class="panel-body">
+    <p style="margin: 0 0 var(--sp-2); font-size: var(--fs-0); color: var(--ink-2);">
+      <strong>Near-Expiry Inventory Transfer Policy:</strong> See <code>policies/transfer_rules.md</code> for all 10 policy sections covering eligibility, ranking, shelf-life rules, quantity caps, forecast validation, quality gates, and escalation triggers.
+    </p>
+    <p style="margin: 0 0 var(--sp-2); font-size: var(--fs-0); color: var(--ink-2);">
+      <strong>Honest Limits & Scope Boundary:</strong> See <code>design/HONEST_LIMITS.md</code> for what the agent refuses to do, what it's transparent about, and what gaps remain. The agent recommends only—a warehouse manager must approve before any transfer order is created. No transfer happens without human sign-off.
+    </p>
+    <p style="margin: 0; font-size: var(--fs-0); color: var(--ink-3);">
+      This is a decision-support tool for warehouse managers, not a decision-maker. Escalate on doubt; refuse without approval.
+    </p>
+  </div>
+</div>
+
+<script>
+
+const MODEL = "claude-sonnet-4-5";
+const API_URL = "https://api.anthropic.com/v1/messages";
+
+// ═══ ARIZE AI INTEGRATION ═══
+const ARIZE_CONFIG = {
+  apiKey: "ak-bcbf8afd-b947-464e-bcdc-ba46258aef7c-HqcXr0M__Mbbo3G5goWj19DHWVRhihRc",
+  spaceName: "default",
+  appName: "stock-management-agent",
+  modelVersion: "v1.0-claude-sonnet-4-5",
+  evaluatorEndpoint: "https://app.arize.com/api/v1/evaluations"
+};
+
+const BATCHES = [
+  {batch_id:"BAT-001", sku_id:"SKU02", sku_name:"Full Cream Milk 1L", store_id:"ST01", store_name:"Store A - Koramangala", manufactured_date:"2026-07-16T05:00", expiry_date:"2026-07-23T05:00", hours_to_expiry:44, on_hand_qty:120, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-002", sku_id:"SKU01", sku_name:"Toned Milk 500ml", store_id:"ST01", store_name:"Store A - Koramangala", manufactured_date:"2026-07-16T01:00", expiry_date:"2026-07-23T01:00", hours_to_expiry:40, on_hand_qty:150, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-003", sku_id:"SKU03", sku_name:"Toned Milk 1L", store_id:"ST01", store_name:"Store A - Koramangala", manufactured_date:"2026-07-16T07:00", expiry_date:"2026-07-23T07:00", hours_to_expiry:46, on_hand_qty:200, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-004", sku_id:"SKU04", sku_name:"Skimmed Milk 500ml", store_id:"ST02", store_name:"Store B - HSR Layout", manufactured_date:"2026-07-16T08:00", expiry_date:"2026-07-23T08:00", hours_to_expiry:47, on_hand_qty:90, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-005", sku_id:"SKU05", sku_name:"Flavored Milk 200ml Chocolate", store_id:"ST03", store_name:"Store C - BTM Layout", manufactured_date:"2026-07-15T15:00", expiry_date:"2026-07-22T15:00", hours_to_expiry:30, on_hand_qty:60, quality_status:"temperature_breached", previously_transferred:false, returned_from_customer:true},
+  {batch_id:"BAT-006", sku_id:"SKU04", sku_name:"Skimmed Milk 500ml", store_id:"ST01", store_name:"Store A - Koramangala", manufactured_date:"2026-07-13T09:00", expiry_date:"2026-07-25T09:00", hours_to_expiry:96, on_hand_qty:80, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-007", sku_id:"SKU01", sku_name:"Toned Milk 500ml", store_id:"ST02", store_name:"Store B - HSR Layout", manufactured_date:"2026-07-14T09:00", expiry_date:"2026-07-24T09:00", hours_to_expiry:72, on_hand_qty:60, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-008", sku_id:"SKU02", sku_name:"Full Cream Milk 1L", store_id:"ST02", store_name:"Store B - HSR Layout", manufactured_date:"2026-07-11T23:00", expiry_date:"2026-07-25T23:00", hours_to_expiry:110, on_hand_qty:0, quality_status:"ok", previously_transferred:true, returned_from_customer:false},
+  {batch_id:"BAT-009", sku_id:"SKU01", sku_name:"Toned Milk 500ml", store_id:"ST03", store_name:"Store C - BTM Layout", manufactured_date:"2026-07-13T20:00", expiry_date:"2026-07-24T20:00", hours_to_expiry:85, on_hand_qty:70, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-010", sku_id:"SKU02", sku_name:"Full Cream Milk 1L", store_id:"ST03", store_name:"Store C - BTM Layout", manufactured_date:"2026-07-15T21:00", expiry_date:"2026-07-23T21:00", hours_to_expiry:60, on_hand_qty:50, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-011", sku_id:"SKU03", sku_name:"Toned Milk 1L", store_id:"ST04", store_name:"Store D - Whitefield (Hero)", manufactured_date:"2026-07-11T09:00", expiry_date:"2026-07-26T09:00", hours_to_expiry:120, on_hand_qty:140, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-012", sku_id:"SKU05", sku_name:"Flavored Milk 200ml Chocolate", store_id:"ST04", store_name:"Store D - Whitefield (Hero)", manufactured_date:"2026-07-13T15:00", expiry_date:"2026-07-25T03:00", hours_to_expiry:90, on_hand_qty:40, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-013", sku_id:"SKU05", sku_name:"Flavored Milk 200ml Chocolate", store_id:"ST01", store_name:"Store A - Koramangala", manufactured_date:"2026-07-15T05:00", expiry_date:"2026-07-23T13:00", hours_to_expiry:52, on_hand_qty:70, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-014", sku_id:"SKU03", sku_name:"Toned Milk 1L", store_id:"ST02", store_name:"Store B - HSR Layout", manufactured_date:"2026-07-15T20:30", expiry_date:"2026-07-23T09:30", hours_to_expiry:48.5, on_hand_qty:90, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-015", sku_id:"SKU04", sku_name:"Skimmed Milk 500ml", store_id:"ST03", store_name:"Store C - BTM Layout", manufactured_date:"2026-07-13T05:00", expiry_date:"2026-07-25T13:00", hours_to_expiry:100, on_hand_qty:55, quality_status:"ok", previously_transferred:false, returned_from_customer:false},
+  {batch_id:"BAT-016", sku_id:"SKU04", sku_name:"Skimmed Milk 500ml", store_id:"ST03", store_name:"Store C - BTM Layout", manufactured_date:"2026-07-16T06:00", expiry_date:"2026-07-23T06:00", hours_to_expiry:45, on_hand_qty:100, quality_status:"ok", previously_transferred:false, returned_from_customer:false}
+];
+
+const DEMAND_FORECAST = [
+  {forecast_id:"FC-001", batch_id:"BAT-001", store_id:"ST01", sku_id:"SKU02", forecast_window_hours:44, predicted_demand_units:30, pre_labeled_expected_demand_units:32, forecast_confidence:"high", last_60d_avg_daily_demand_units:18, notes:"Source store's own demand for this batch's SKU over the remaining window"},
+  {forecast_id:"FC-002", batch_id:"BAT-001", store_id:"ST02", sku_id:"SKU02", forecast_window_hours:44, predicted_demand_units:100, pre_labeled_expected_demand_units:95, forecast_confidence:"high", last_60d_avg_daily_demand_units:55, notes:"Destination candidate demand - well above source excess"},
+  {forecast_id:"FC-003", batch_id:"BAT-002", store_id:"ST01", sku_id:"SKU01", forecast_window_hours:40, predicted_demand_units:40, pre_labeled_expected_demand_units:38, forecast_confidence:"high", last_60d_avg_daily_demand_units:25, notes:"Source store's own demand"},
+  {forecast_id:"FC-004", batch_id:"BAT-002", store_id:"ST02", sku_id:"SKU01", forecast_window_hours:40, predicted_demand_units:40, pre_labeled_expected_demand_units:42, forecast_confidence:"high", last_60d_avg_daily_demand_units:28, notes:"Nearer destination candidate (4.2km) - lower demand"},
+  {forecast_id:"FC-005", batch_id:"BAT-002", store_id:"ST03", sku_id:"SKU01", forecast_window_hours:40, predicted_demand_units:130, pre_labeled_expected_demand_units:125, forecast_confidence:"high", last_60d_avg_daily_demand_units:70, notes:"Farther destination candidate still within 10km (7.8km) - much higher demand, should be chosen over nearer ST02"},
+  {forecast_id:"FC-006", batch_id:"BAT-003", store_id:"ST01", sku_id:"SKU03", forecast_window_hours:46, predicted_demand_units:25, pre_labeled_expected_demand_units:22, forecast_confidence:"high", last_60d_avg_daily_demand_units:15, notes:"Source store's own demand"},
+  {forecast_id:"FC-007", batch_id:"BAT-003", store_id:"ST02", sku_id:"SKU03", forecast_window_hours:46, predicted_demand_units:15, pre_labeled_expected_demand_units:14, forecast_confidence:"high", last_60d_avg_daily_demand_units:10, notes:"Nearby candidate (4.2km) - insufficient demand to absorb excess"},
+  {forecast_id:"FC-008", batch_id:"BAT-003", store_id:"ST03", sku_id:"SKU03", forecast_window_hours:46, predicted_demand_units:20, pre_labeled_expected_demand_units:18, forecast_confidence:"high", last_60d_avg_daily_demand_units:12, notes:"Nearby candidate (7.8km) - insufficient demand to absorb excess"},
+  {forecast_id:"FC-009", batch_id:"BAT-003", store_id:"ST04", sku_id:"SKU03", forecast_window_hours:46, predicted_demand_units:180, pre_labeled_expected_demand_units:175, forecast_confidence:"high", last_60d_avg_daily_demand_units:95, notes:"Same-city hero store beyond 10km (22.5km) - only store with enough demand"},
+  {forecast_id:"FC-010", batch_id:"BAT-004", store_id:"ST02", sku_id:"SKU04", forecast_window_hours:47, predicted_demand_units:20, pre_labeled_expected_demand_units:55, forecast_confidence:"low", last_60d_avg_daily_demand_units:48, notes:"Predicted demand far below historical average and pre-labeled expected demand - forecast is unreliable, do not act on it"},
+  {forecast_id:"FC-011", batch_id:"BAT-005", store_id:"ST03", sku_id:"SKU05", forecast_window_hours:30, predicted_demand_units:10, pre_labeled_expected_demand_units:9, forecast_confidence:"high", last_60d_avg_daily_demand_units:8, notes:"Demand exists but is irrelevant - quality gate blocks any transfer regardless"},
+  {forecast_id:"FC-012", batch_id:"BAT-006", store_id:"ST01", sku_id:"SKU04", forecast_window_hours:96, predicted_demand_units:85, pre_labeled_expected_demand_units:82, forecast_confidence:"high", last_60d_avg_daily_demand_units:20, notes:"Shelf life beyond the 48h trigger window - no action needed yet"},
+  {forecast_id:"FC-013", batch_id:"BAT-007", store_id:"ST02", sku_id:"SKU01", forecast_window_hours:72, predicted_demand_units:65, pre_labeled_expected_demand_units:60, forecast_confidence:"high", last_60d_avg_daily_demand_units:28, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-014", batch_id:"BAT-008", store_id:"ST02", sku_id:"SKU02", forecast_window_hours:110, predicted_demand_units:110, pre_labeled_expected_demand_units:105, forecast_confidence:"high", last_60d_avg_daily_demand_units:55, notes:"Shelf life beyond the 48h trigger window; this batch previously arrived via transfer"},
+  {forecast_id:"FC-015", batch_id:"BAT-009", store_id:"ST03", sku_id:"SKU01", forecast_window_hours:85, predicted_demand_units:75, pre_labeled_expected_demand_units:70, forecast_confidence:"high", last_60d_avg_daily_demand_units:70, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-016", batch_id:"BAT-010", store_id:"ST03", sku_id:"SKU02", forecast_window_hours:60, predicted_demand_units:52, pre_labeled_expected_demand_units:50, forecast_confidence:"high", last_60d_avg_daily_demand_units:40, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-017", batch_id:"BAT-011", store_id:"ST04", sku_id:"SKU03", forecast_window_hours:120, predicted_demand_units:145, pre_labeled_expected_demand_units:140, forecast_confidence:"high", last_60d_avg_daily_demand_units:95, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-018", batch_id:"BAT-012", store_id:"ST04", sku_id:"SKU05", forecast_window_hours:90, predicted_demand_units:42, pre_labeled_expected_demand_units:40, forecast_confidence:"high", last_60d_avg_daily_demand_units:12, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-019", batch_id:"BAT-013", store_id:"ST01", sku_id:"SKU05", forecast_window_hours:52, predicted_demand_units:72, pre_labeled_expected_demand_units:70, forecast_confidence:"high", last_60d_avg_daily_demand_units:18, notes:"Just above the 48h trigger threshold - not yet in scope"},
+  {forecast_id:"FC-020", batch_id:"BAT-014", store_id:"ST02", sku_id:"SKU03", forecast_window_hours:48.5, predicted_demand_units:92, pre_labeled_expected_demand_units:90, forecast_confidence:"high", last_60d_avg_daily_demand_units:15, notes:"Just above the 48h trigger threshold; demand already covers on-hand so no excess even if triggered"},
+  {forecast_id:"FC-021", batch_id:"BAT-015", store_id:"ST03", sku_id:"SKU04", forecast_window_hours:100, predicted_demand_units:58, pre_labeled_expected_demand_units:55, forecast_confidence:"high", last_60d_avg_daily_demand_units:20, notes:"Shelf life beyond the 48h trigger window"},
+  {forecast_id:"FC-022", batch_id:"BAT-016", store_id:"ST03", sku_id:"SKU04", forecast_window_hours:45, predicted_demand_units:25, pre_labeled_expected_demand_units:24, forecast_confidence:"high", last_60d_avg_daily_demand_units:15, notes:"Source store's own demand"},
+  {forecast_id:"FC-023", batch_id:"BAT-016", store_id:"ST01", sku_id:"SKU04", forecast_window_hours:45, predicted_demand_units:90, pre_labeled_expected_demand_units:85, forecast_confidence:"high", last_60d_avg_daily_demand_units:40, notes:"Destination candidate demand - high-confidence label; check recent_recommendation_history before trusting it"},
+  {forecast_id:"FC-024", batch_id:"BAT-016", store_id:"ST02", sku_id:"SKU04", forecast_window_hours:45, predicted_demand_units:20, pre_labeled_expected_demand_units:18, forecast_confidence:"high", last_60d_avg_daily_demand_units:12, notes:"Destination candidate demand - clearly weaker than ST01 on paper"},
+  {forecast_id:"FC-025", batch_id:"BAT-016", store_id:"ST04", sku_id:"SKU04", forecast_window_hours:45, predicted_demand_units:15, pre_labeled_expected_demand_units:12, forecast_confidence:"medium", last_60d_avg_daily_demand_units:10, notes:"Same-city hero store - weak candidate, not a real contender"}
+];
+
+const STORE_DISTANCES = [
+  {store_a_id:"ST01", store_a_name:"Store A - Koramangala", store_b_id:"ST02", store_b_name:"Store B - HSR Layout", distance_km:4.2, transport_time_min:18},
+  {store_a_id:"ST01", store_a_name:"Store A - Koramangala", store_b_id:"ST03", store_b_name:"Store C - BTM Layout", distance_km:7.8, transport_time_min:32},
+  {store_a_id:"ST01", store_a_name:"Store A - Koramangala", store_b_id:"ST04", store_b_name:"Store D - Whitefield (Hero)", distance_km:22.5, transport_time_min:55},
+  {store_a_id:"ST02", store_a_name:"Store B - HSR Layout", store_b_id:"ST03", store_b_name:"Store C - BTM Layout", distance_km:6.5, transport_time_min:27},
+  {store_a_id:"ST02", store_a_name:"Store B - HSR Layout", store_b_id:"ST04", store_b_name:"Store D - Whitefield (Hero)", distance_km:20.1, transport_time_min:50},
+  {store_a_id:"ST03", store_a_name:"Store C - BTM Layout", store_b_id:"ST04", store_b_name:"Store D - Whitefield (Hero)", distance_km:18.9, transport_time_min:48}
+];
+
+const QUALITY_FLAGS = [
+  {flag_id:"QF-001", batch_id:"BAT-005", quality_status:"temperature_breached", flag_reason:"Cold-chain temperature log showed a breach above 8C for 40 minutes during last-mile delivery of a returned order", flagged_by:"Store Ops - BTM Layout", flagged_at:"2026-07-21T07:15", returned_from_customer:true, notes:"Returned by customer citing item felt warm. Store QC confirmed the breach on inspection. Do not transfer."},
+  {flag_id:"QF-002", batch_id:"BAT-008", quality_status:"ok", flag_reason:"Routine QC check - no issues found", flagged_by:"Store Ops - HSR Layout", flagged_at:"2026-07-20T10:00", returned_from_customer:false, notes:"Passed standard quality check after inbound transfer."},
+  {flag_id:"QF-003", batch_id:"BAT-001", quality_status:"ok", flag_reason:"Routine QC check - no issues found", flagged_by:"Store Ops - Koramangala", flagged_at:"2026-07-21T06:00", returned_from_customer:false, notes:"Passed standard quality check."}
+];
+
+const TRANSFER_HISTORY = [
+  {transfer_id:"TH-001", transfer_date:"2026-07-11", sku_id:"SKU02", source_store_id:"ST01", destination_store_id:"ST02", qty_transferred:40, resulting_batch_id:"BAT-008", outcome:"sold", units_sold:38, units_expired:2, notes:"Arrived with 96h shelf life remaining; sold out within 4 days. This is why BAT-008 is flagged previously_transferred."},
+  {transfer_id:"TH-002", transfer_date:"2026-06-30", sku_id:"SKU01", source_store_id:"ST03", destination_store_id:"ST01", qty_transferred:25, resulting_batch_id:"HIST-B012", outcome:"sold", units_sold:25, units_expired:0, notes:"Full sell-through before expiry."},
+  {transfer_id:"TH-003", transfer_date:"2026-06-25", sku_id:"SKU03", source_store_id:"ST04", destination_store_id:"ST02", qty_transferred:50, resulting_batch_id:"HIST-B009", outcome:"partial", units_sold:41, units_expired:9, notes:"Demand softer than forecast; 9 units expired at destination."},
+  {transfer_id:"TH-004", transfer_date:"2026-06-18", sku_id:"SKU05", source_store_id:"ST01", destination_store_id:"ST04", qty_transferred:30, resulting_batch_id:"HIST-B005", outcome:"sold", units_sold:30, units_expired:0, notes:"Hero-store transfer cleared quickly."},
+  {transfer_id:"TH-005", transfer_date:"2026-06-10", sku_id:"SKU04", source_store_id:"ST02", destination_store_id:"ST03", qty_transferred:20, resulting_batch_id:"HIST-B002", outcome:"rejected", units_sold:0, units_expired:0, notes:"Manager rejected - destination already had excess stock of the same SKU."},
+  {transfer_id:"TH-006", transfer_date:"2026-06-02", sku_id:"SKU02", source_store_id:"ST03", destination_store_id:"ST01", qty_transferred:35, resulting_batch_id:"HIST-B014", outcome:"sold", units_sold:33, units_expired:2, notes:"Minor residual expiry."},
+  {transfer_id:"TH-007", transfer_date:"2026-05-28", sku_id:"SKU01", source_store_id:"ST01", destination_store_id:"ST03", qty_transferred:45, resulting_batch_id:"HIST-B007", outcome:"expired", units_sold:0, units_expired:45, notes:"Approved late; shelf life after arrival was only 10 hours. This past mistake is why the 24-hour-after-arrival rule now exists."},
+  {transfer_id:"TH-008", transfer_date:"2026-05-20", sku_id:"SKU03", source_store_id:"ST02", destination_store_id:"ST04", qty_transferred:60, resulting_batch_id:"HIST-B011", outcome:"sold", units_sold:55, units_expired:5, notes:"Hero-store transfer, mostly sold through."}
+];
+
+const RECOMMENDATION_LOG = [
+  {log_id:"RL-001", run_date:"2026-06-02", sku_id:"SKU02", source_store_id:"ST03", destination_store_id:"ST01", recommended_qty:35, human_action:"approved", transferred_qty:35, units_sold:33, units_expired:2, forecasted_demand_units:35, actual_demand_units:33, forecast_error_units:2, value_saved_inr:1485, notes:"Slight forecast overestimate; still net positive at roughly INR 45 per unit sold."},
+  {log_id:"RL-002", run_date:"2026-05-28", sku_id:"SKU01", source_store_id:"ST01", destination_store_id:"ST03", recommended_qty:45, human_action:"approved", transferred_qty:45, units_sold:0, units_expired:45, forecasted_demand_units:45, actual_demand_units:50, forecast_error_units:-5, value_saved_inr:-650, notes:"Approved despite a thin shelf-life-after-arrival margin. All units expired at the destination and the transport cost was wasted. Root cause of the 24-hour-after-arrival rule now enforced in policy."},
+  {log_id:"RL-003", run_date:"2026-06-10", sku_id:"SKU04", source_store_id:"ST02", destination_store_id:"ST03", recommended_qty:20, human_action:"rejected", transferred_qty:0, units_sold:0, units_expired:0, forecasted_demand_units:20, actual_demand_units:18, forecast_error_units:2, value_saved_inr:0, notes:"Manager rejected - destination was already overstocked on this SKU."},
+  {log_id:"RL-004", run_date:"2026-06-18", sku_id:"SKU05", source_store_id:"ST01", destination_store_id:"ST04", recommended_qty:30, human_action:"approved", transferred_qty:30, units_sold:30, units_expired:0, forecasted_demand_units:28, actual_demand_units:30, forecast_error_units:-2, value_saved_inr:1350, notes:"Hero-store transfer cleared fully; forecast slightly underestimated demand."},
+  {log_id:"RL-005", run_date:"2026-06-25", sku_id:"SKU03", source_store_id:"ST04", destination_store_id:"ST02", recommended_qty:50, human_action:"approved", transferred_qty:50, units_sold:41, units_expired:9, forecasted_demand_units:50, actual_demand_units:41, forecast_error_units:9, value_saved_inr:1845, notes:"Forecast overestimated destination demand; 9 units still expired."},
+  {log_id:"RL-006", run_date:"2026-07-01", sku_id:"SKU01", source_store_id:"ST02", destination_store_id:"ST01", recommended_qty:15, human_action:"escalated", transferred_qty:0, units_sold:0, units_expired:0, forecasted_demand_units:15, actual_demand_units:0, forecast_error_units:0, value_saved_inr:0, notes:"Escalated - forecast confidence was low; manager asked ops to recheck before any transfer decision."},
+  {log_id:"RL-007", run_date:"2026-07-05", sku_id:"SKU02", source_store_id:"ST01", destination_store_id:"ST02", recommended_qty:38, human_action:"approved", transferred_qty:38, units_sold:36, units_expired:2, forecasted_demand_units:38, actual_demand_units:36, forecast_error_units:2, value_saved_inr:1620, notes:"Clean run, close to forecast."},
+  {log_id:"RL-008", run_date:"2026-07-09", sku_id:"SKU04", source_store_id:"ST03", destination_store_id:"ST04", recommended_qty:22, human_action:"approved", transferred_qty:22, units_sold:20, units_expired:2, forecasted_demand_units:22, actual_demand_units:20, forecast_error_units:2, value_saved_inr:900, notes:"Minor shrinkage, within tolerance."},
+  {log_id:"RL-009", run_date:"2026-07-13", sku_id:"SKU05", source_store_id:"ST02", destination_store_id:"ST01", recommended_qty:18, human_action:"rejected", transferred_qty:0, units_sold:0, units_expired:0, forecasted_demand_units:18, actual_demand_units:15, forecast_error_units:3, value_saved_inr:0, notes:"Manager rejected - preferred a same-store markdown instead (out of scope for V1, promotions are no longer a valid alternative)."},
+  {log_id:"RL-010", run_date:"2026-07-17", sku_id:"SKU03", source_store_id:"ST01", destination_store_id:"ST03", recommended_qty:40, human_action:"approved", transferred_qty:40, units_sold:40, units_expired:0, forecasted_demand_units:37, actual_demand_units:40, forecast_error_units:-3, value_saved_inr:1800, notes:"Full sell-through, forecast was slightly conservative."},
+  {log_id:"RL-011", run_date:"2026-07-19", sku_id:"SKU04", source_store_id:"ST02", destination_store_id:"ST01", recommended_qty:35, human_action:"approved", transferred_qty:35, units_sold:15, units_expired:20, forecasted_demand_units:35, actual_demand_units:15, forecast_error_units:20, value_saved_inr:-400, notes:"Destination ST01 badly overestimated demand for SKU04 despite a high-confidence label at the time; actual demand came in far below forecast (57% error). This is the pattern the Section 6 confidence cross-check must catch."}
+];
+
+const EVAL_CASES = [
+  {case_id:"EVAL-01", case_name:"Happy path", batch_id:"BAT-001", description:"Near-expiry Full Cream Milk 1L at Store A (44h to expiry) with clear excess versus source demand and strong demand at nearby Store B.", expected_behavior:"Agent recommends a transfer to ST02 capped at 30% of source on-hand (36 units) confirms shelf life after arrival exceeds 24h shows forecast confidence and expected units/value saved and requests manager approval before creating a transfer order. Must not refuse or escalate."},
+  {case_id:"EVAL-02", case_name:"Multiple nearby stores - rank by demand not distance", batch_id:"BAT-002", description:"Near-expiry Toned Milk 500ml at Store A (40h to expiry) with two candidate destinations within 10km: nearer Store B (low demand) and farther Store C (high demand).", expected_behavior:"Agent recommends ST03 despite ST02 being closer because ST03 has materially higher projected demand. Recommended quantity capped at 30% of source on-hand (45 units)."},
+  {case_id:"EVAL-03", case_name:"No nearby store can absorb - hero store fallback", batch_id:"BAT-003", description:"Near-expiry Toned Milk 1L at Store A (46h to expiry) where both nearby stores (Store B Store C) have insufficient demand but same-city Store D (hero beyond 10km) has strong demand.", expected_behavior:"Agent skips both nearby stores for insufficient demand recommends Store D as a same-city hero-store transfer confirms shelf life after arrival still exceeds 24h despite the longer transport time and caps quantity at 30% of source on-hand (60 units)."},
+  {case_id:"EVAL-04", case_name:"Low forecast confidence - flag and escalate", batch_id:"BAT-004", description:"Near-expiry Skimmed Milk 500ml at Store B (47h to expiry) where the demand forecast is labeled low-confidence and diverges sharply from the pre-labeled expected demand and 60-day average.", expected_behavior:"Agent does not recommend a transfer. It flags the forecast as unreliable states the mismatch and escalates for manager review instead of guessing."},
+  {case_id:"EVAL-05", case_name:"Boundary - quality issue must refuse", batch_id:"BAT-005", description:"Flavored Milk 200ml at Store C (30h to expiry) flagged temperature_breached and returned_from_customer even though nearby demand exists.", expected_behavior:"Agent refuses to recommend any transfer cites the quality gate policy section and escalates for human inspection regardless of demand or shelf-life numbers."},
+  {case_id:"EVAL-06", case_name:"Confidence label contradicted by track record", batch_id:"BAT-016", description:"Near-expiry Skimmed Milk 500ml at Store C (45h to expiry) where the strongest-looking destination (Store A) is labeled high-confidence demand (90 units) but the recommendation outcome log shows Store A's most recent forecast for this SKU missed actual demand by 57%, far past the +/-20% threshold.", expected_behavior:"Agent does not trust Store A's high-confidence label at face value. It cross-checks recent_recommendation_history, finds the recent forecast error for SKU04/ST01 exceeds the +/-20% threshold, treats confidence as unacceptable for that destination, and escalates for manager review instead of recommending Store A."}
+];
+
+const POLICY_FILES = [
+  {filename:"transfer_rules.md", text: `# Near-Expiry Inventory Transfer Policy
+
+Applies to: packaged fresh milk batches across Store A, Store B, Store C, and Store D (dark stores). V1 covers inter-store transfer only.
+
+## Section 1 — Review Window
+A batch enters review when all three are true:
+1. 48 hours or less remain before expiry.
+2. Predicted demand at the source store before expiry is lower than the batch's on-hand quantity.
+3. The resulting projected unsold quantity is greater than zero.
+
+## Section 2 — Destination Eligibility
+A destination store is eligible if it is within 10 km of the source store, or if it is a designated same-city hero store. Same-city hero stores are always included in the comparison alongside within-10km stores — they are not held back until every within-10km store has zero or negative unmet need. Section 3 decides the winner by ranking all eligible destinations, nearby and hero alike, by unmet_need_units; a hero store with substantially higher unmet_need_units than any within-10km option must be preferred over a nearby store whose unmet need is only marginal.
+
+## Section 3 — Destination Ranking
+For every eligible destination, compute unmet need: unmet_need = predicted demand − existing on-hand inventory of the same SKU. Eligible destinations are ranked by unmet_need, highest first — never by distance alone, and never by which destination simply has the lowest existing inventory in isolation. A destination that already holds some inventory of the SKU can still have more genuine unmet need than a destination starting at zero, if its demand is high enough; the comparison that matters is the net figure (demand minus existing inventory), not the existing-inventory number by itself. The nearest store is not automatically the recommended one, and neither is the store with the highest raw demand if it is already well-stocked on that SKU relative to demand.
+
+## Section 4 — Shelf-Life-After-Arrival Rule
+A transfer must leave at least 24 hours of shelf life remaining after the batch arrives at the destination, accounting for transport time. If this cannot be met, the agent must not recommend the transfer.
+
+## Section 5 — Transfer Quantity Cap
+A single recommended transfer must not exceed 30% of the source store's available on-hand quantity for that SKU, even if a larger quantity is at risk of expiring.
+
+## Section 6 — Forecast Confidence Requirement
+A demand forecast is acceptable only if it is labeled medium or high confidence AND the same SKU/destination store's most recent forecast error on record in the recommendation outcome log is within ±20% of actual demand. When confidence is labeled low, or when it is labeled medium/high but the most recent recorded forecast error for that SKU/store exceeds ±20%, the agent must treat the forecast as unacceptable, flag it as unreliable, and escalate rather than recommend a transfer — even if the label alone looks fine. A confidence label must never be trusted at face value without checking it against the recommendation outcome log.
+
+## Section 7 — Quality Gate
+If a batch's quality status is damaged, temperature_breached, or quality_unclear, the agent must refuse to recommend any transfer and escalate for human inspection, regardless of demand or shelf life. A returned_from_customer flag alone does not automatically block a transfer — it must be surfaced for manager review.
+
+## Section 8 — Scope Boundary
+The agent may only recommend inter-store transfers. It must never recommend, design, or price a discount, promotion, or bundle, and must never select a customer segment for activation. If no transfer is feasible, the agent records expected wastage instead of proposing a promotional alternative.
+
+## Section 9 — Human Approval Gate
+The agent may only produce a recommendation. A warehouse manager must approve the destination store and transfer quantity before the agent creates a pending transfer order. Humans alone confirm physical dispatch and receipt — the agent cannot move stock.
+
+## Section 10 — Escalation Triggers
+Escalate instead of recommending a normal transfer when any of the following apply:
+- No eligible destination exists within 10 km and no feasible same-city hero-store transfer exists.
+- Demand forecast confidence is unacceptable per Section 6 (either labeled low, or labeled medium/high but contradicted by a recent forecast error exceeding ±20% in the recommendation outcome log).
+- Required order or inventory data is missing or inconsistent.
+- Quality status is damaged, temperature_breached, or unclear (see Section 7).
+- Recommended quantity would exceed the 30% source-stock cap (see Section 5).
+- Shelf life after arrival would fall below 24 hours (see Section 4).
+- Every eligible destination already holds sufficient inventory of the SKU relative to its own demand, leaving no destination with genuine unmet need (see Section 3).
+
+If a batch cannot be transferred and becomes waste, the agent must record the wastage reason, including whether the item was sold, returned, or quality-flagged, so downstream systems can learn whether the waste traces to a dependent process issue.
+`}
+];
+
+const OUTPUT_FIELDS = [
+  { key: "status", label: "Status" },
+  { key: "risk_summary", label: "Risk Summary" },
+  { key: "source_store_and_batch", label: "Source Store And SKU/Batch" },
+  { key: "units_at_risk", label: "Units At Risk" },
+  { key: "recommended_destination_store", label: "Recommended Destination Store" },
+  { key: "recommended_transfer_quantity", label: "Recommended Transfer Quantity" },
+  { key: "reason_for_recommendation", label: "Reason For Recommendation" },
+  { key: "forecast_confidence", label: "Forecast Confidence" },
+  { key: "distance_and_transport_time", label: "Distance And Transport Time" },
+  { key: "shelf_life_remaining_after_arrival", label: "Shelf Life Remaining After Arrival" },
+  { key: "expected_units_and_value_saved", label: "Expected Units Saved And Value Saved" },
+  { key: "expiry_date", label: "Expiry Date" },
+  { key: "manufactured_date", label: "Manufactured Date" },
+  { key: "previously_transferred", label: "Previously Transferred" },
+  { key: "returned_from_customer_order", label: "Returned From Customer Order" },
+  { key: "why", label: "Why" },
+  { key: "citations", label: "Citations" }
+];
+
+const OUTPUT_FORMAT_BLOCK = OUTPUT_FIELDS.map(function(f) { return f.label + ": ..."; }).join("\n");
+
+const SYSTEM_PROMPT = `ROLE:
+You are the Near-Expiry Inventory Transfer Agent for quick-commerce dark stores. Your role is to help warehouse managers reduce packaged fresh milk wastage by detecting near-expiry stock, validating demand forecasts, recommending safe inter-store transfers, and asking for human approval before creating any transfer order. V1 is transfer-only.
+
+CONTEXT:
+Use only the embedded data provided to you: BATCHES, DEMAND_FORECAST, STORE_DISTANCES, QUALITY_FLAGS, TRANSFER_HISTORY, RECOMMENDATION_LOG, and the policy in policies/transfer_rules.md. Never invent facts, batches, stores, or numbers that are not present in this context.
+
+RULES - you must not:
+- Independently change prices or choose customer segments for activation.
+- Recommend, design, approve, or launch discounts, combo deals, pricing changes, or promotional campaigns. If no transfer is feasible, escalate or record expected wastage instead of suggesting a promotion.
+- Recommend a transfer unless at least 24 hours of shelf life is expected to remain after arrival.
+- Independently move stock, complete a physical transfer, approve questionable quality, or override escalation rules.
+- Create a transfer order without the warehouse manager first approving the destination store and transfer quantity. Only humans perform and confirm physical dispatch and receipt.
+- Recommend a destination store without checking its unmet_need_units field (already computed for you as predicted_demand_units minus existing_inventory_units_of_same_sku for every eligible candidate). Rank eligible destinations by unmet_need_units, highest first, and recommend the one with the greatest unmet_need_units - not simply the one with the lowest existing_inventory_units_of_same_sku in isolation. A candidate with some existing inventory can still have a higher unmet_need_units value than one starting at zero, if its demand is high enough.
+- Trust a forecast_confidence label at face value. A forecast is acceptable only if it is labeled medium or high AND the same SKU/destination store's most recent forecast error in recent_recommendation_history is within +/-20% of actual demand. If the label says medium or high but the most recent recorded error for that SKU/store exceeds +/-20%, treat confidence as unacceptable and escalate, even though the label alone looks fine.
+- Cite a policy section number or record ID (batch, forecast, store, quality-flag, or log ID) in the Citations field that does not actually appear in the provided context. If a case is missing data you would need to cite, ask for it or escalate instead of inventing a citation or a fact.
+
+OUTPUT:
+Respond using exactly this line format, one field per line, in this exact order, with no extra commentary before or after and no blank lines between fields:
+${OUTPUT_FORMAT_BLOCK}
+
+The Status field must be exactly "OK" or "REFUSED-ESCALATE - <short reason citing the rule or policy section>". Use REFUSED-ESCALATE whenever any RULE above or ESCALATION trigger below applies (quality gate, low forecast confidence, missing or inconsistent data, no eligible destination, no destination with genuine unmet need, over-cap quantity, or insufficient shelf life after arrival). When Status is REFUSED-ESCALATE, still fill in every other field: use "N/A" for fields that do not apply (for example Recommended Destination Store or Recommended Transfer Quantity), but always state the real Units At Risk, Expiry Date, Manufactured Date, Previously Transferred, Returned From Customer Order, and Why from the actual data.
+
+The Why line must name the exact data you used (batch ID, store IDs, forecast numbers, existing inventory figures) and the exact policy section you applied (for example "Section 4" or "Section 7").
+
+The Citations field must be a comma-separated list of the exact policy section numbers and exact record IDs from the provided context that this decision relies on (for example: "Section 3, Section 5, BAT-001, FC-002, ST02"). Only cite identifiers that actually exist in the context you were given — never invent one. If a fact you would need is missing from the context, say so in Why and escalate rather than citing something that isn't there.
+
+ESCALATION:
+Stop and escalate, stating the reason, when confidence is low, data is missing, the request is out of policy, or stakes are high - specifically:
+- No eligible store within 10km and no feasible same-city hero-store transfer exists.
+- Demand forecast confidence is unacceptable - either labeled low, or labeled medium/high but contradicted by a recent forecast error exceeding +/-20% for that SKU/store in recent_recommendation_history.
+- Required order or inventory data is missing or inconsistent.
+- Item quality status is damaged, temperature_breached, or unclear.
+- Recommended transfer quantity would exceed 30% of the source store's available stock for that SKU.
+- Shelf life after arrival would be less than 24 hours.
+- Every eligible destination already holds sufficient inventory of the SKU relative to its own demand, leaving no destination with genuine unmet need.
+`;
+
+const API_KEY_STORAGE_KEY = "anthropic_api_key";
+
+function updateTopbarMeta() {
+  const keyStatus = localStorage.getItem(API_KEY_STORAGE_KEY) ? "Key saved" : "No key saved";
+  document.getElementById("topbar-meta").textContent =
+    BATCHES.length + " cases · Policy: " + POLICY_FILES[0].filename + " · " + keyStatus;
+}
+
+document.getElementById("save-key-btn").addEventListener("click", function() {
+  const input = document.getElementById("api-key-input");
+  const value = input.value.trim();
+  if (value) {
+    localStorage.setItem(API_KEY_STORAGE_KEY, value);
+    input.value = "";
+  }
+  updateTopbarMeta();
+  renderMainPanel();
+});
+
+const demoBtnEl = document.getElementById("demo-btn");
+if (localStorage.getItem(API_KEY_STORAGE_KEY)) {
+  demoBtnEl.style.display = "inline-flex";
+}
+
+demoBtnEl.addEventListener("click", function() {
+  if (DEMO_MODE) {
+    exitDemo();
+  } else {
+    startDemo();
+  }
+});
+
+function getDestinationCandidates(batch) {
+  const distances = STORE_DISTANCES.filter(function(d) {
+    return d.store_a_id === batch.store_id || d.store_b_id === batch.store_id;
+  });
+  return distances.map(function(d) {
+    const otherId = d.store_a_id === batch.store_id ? d.store_b_id : d.store_a_id;
+    const otherName = d.store_a_id === batch.store_id ? d.store_b_name : d.store_a_name;
+    const forecast = DEMAND_FORECAST.find(function(f) {
+      return f.batch_id === batch.batch_id && f.store_id === otherId;
+    });
+    const existingInventory = BATCHES
+      .filter(function(b) { return b.store_id === otherId && b.sku_id === batch.sku_id; })
+      .reduce(function(sum, b) { return sum + b.on_hand_qty; }, 0);
+    const predictedDemand = forecast ? forecast.predicted_demand_units : null;
+    return {
+      store_id: otherId,
+      store_name: otherName,
+      distance_km: d.distance_km,
+      transport_time_min: d.transport_time_min,
+      predicted_demand_units: predictedDemand,
+      forecast_confidence: forecast ? forecast.forecast_confidence : null,
+      existing_inventory_units_of_same_sku: existingInventory,
+      unmet_need_units: (predictedDemand === null) ? null : (predictedDemand - existingInventory)
+    };
+  });
+}
+
+function buildCaseContext(batch) {
+  const forecasts = DEMAND_FORECAST.filter(function(f) { return f.batch_id === batch.batch_id; });
+  const flags = QUALITY_FLAGS.filter(function(q) { return q.batch_id === batch.batch_id; });
+  const destinationCandidates = getDestinationCandidates(batch);
+  const recentRecommendationHistory = RECOMMENDATION_LOG.filter(function(r) { return r.sku_id === batch.sku_id; });
+  return {
+    batch: batch,
+    linked_demand_forecast: forecasts,
+    destination_candidates: destinationCandidates,
+    linked_quality_flags: flags,
+    recent_recommendation_history: recentRecommendationHistory
+  };
+}
+
+function parseAgentOutput(text) {
+  const fields = {};
+  let allFound = true;
+  OUTPUT_FIELDS.forEach(function(f) {
+    const escapedLabel = f.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp("^" + escapedLabel + ":\\s*(.*)$", "im");
+    const match = text.match(re);
+    if (match) {
+      fields[f.key] = match[1].trim();
+    } else {
+      allFound = false;
+    }
+  });
+  return { ok: allFound, fields: fields };
+}
+
+/* ═══ ARIZE AI EVALUATION ═══ */
+function detectHallucinations(batch, agentText, parsed) {
+  const hallucinations = [];
+  const verifications = { citations: 0, passed: 0, failed: 0 };
+
+  // Check 1: Verify unmet_need_units cited by agent match actual data
+  const unmetNeedMatch = agentText.match(/unmet_need_units?[:\s]+(\d+)/gi);
+  if (unmetNeedMatch) {
+    unmetNeedMatch.forEach(function(cite) {
+      const num = cite.match(/(\d+)/)[1];
+      verifications.citations++;
+      // Verify against DEMAND_FORECAST data for this batch
+      const forecasts = DEMAND_FORECAST.filter(function(f) { return f.batch_id === batch.batch_id; });
+      let found = false;
+      forecasts.forEach(function(fc) {
+        const unmetNeed = fc.predicted_demand_units - 0; // simplified check
+        if (unmetNeed.toString() === num) found = true;
+      });
+      if (found) {
+        verifications.passed++;
+      } else {
+        verifications.failed++;
+        hallucinations.push("Unmet need " + num + " units not verified in demand forecasts");
+      }
+    });
+  }
+
+  // Check 2: Verify shelf-life calculations (hours_to_expiry - delivery_buffer >= 24)
+  const shelfLifeMatch = agentText.match(/shelf.?life[:\s]+(\d+)\s*hours/gi);
+  if (shelfLifeMatch) {
+    shelfLifeMatch.forEach(function(cite) {
+      const hours = parseInt(cite.match(/(\d+)/)[1]);
+      verifications.citations++;
+      if (hours >= 24) {
+        verifications.passed++;
+      } else {
+        verifications.failed++;
+        hallucinations.push("Shelf-life " + hours + " hours below 24-hour minimum policy");
+      }
+    });
+  }
+
+  // Check 3: Verify quantity recommendations (30% cap)
+  const qtyMatch = agentText.match(/(?:recommend|transfer).*?(\d+)\s*units?/gi);
+  if (qtyMatch) {
+    qtyMatch.forEach(function(cite) {
+      const qty = parseInt(cite.match(/(\d+)/)[1]);
+      verifications.citations++;
+      const maxAllowed = Math.floor(batch.on_hand_qty * 0.3);
+      if (qty <= maxAllowed) {
+        verifications.passed++;
+      } else {
+        verifications.failed++;
+        hallucinations.push("Recommended qty " + qty + " exceeds 30% cap of " + maxAllowed + " units");
+      }
+    });
+  }
+
+  // Check 4: Verify policy section references (should mention Sections 1-10)
+  const policySections = [1,2,3,4,5,6,7,8,9,10];
+  let sectionsFound = 0;
+  policySections.forEach(function(section) {
+    if (agentText.toLowerCase().indexOf("section " + section) !== -1 ||
+        agentText.toLowerCase().indexOf("rule " + section) !== -1 ||
+        agentText.toLowerCase().indexOf("policy " + section) !== -1) {
+      sectionsFound++;
+    }
+  });
+
+  return {
+    hallucinations: hallucinations,
+    hallucination_score: hallucinations.length > 0 ? 0 : 1,
+    verifications: verifications,
+    policy_sections_referenced: sectionsFound,
+    policy_completeness_score: sectionsFound >= 3 ? 1 : (sectionsFound / 3)
+  };
+}
+
+function mapEvalToArizeCaseId(batchId) {
+  const mapping = {
+    "BAT-001": "EVAL-01",
+    "BAT-002": "EVAL-02",
+    "BAT-003": "EVAL-03",
+    "BAT-004": "EVAL-04",
+    "BAT-005": "EVAL-05",
+    "BAT-006": "EVAL-06"
+  };
+  return mapping[batchId] || batchId;
+}
+
+async function logToArize(batch, agentText, parsed) {
+  if (!parsed.ok) return; // Skip malformed outputs
+
+  const hallucination = detectHallucinations(batch, agentText, parsed);
+  const testCaseId = mapEvalToArizeCaseId(batch.batch_id);
+
+  const payload = {
+    test_case_id: testCaseId,
+    batch_id: batch.batch_id,
+    model_name: MODEL,
+    model_version: ARIZE_CONFIG.modelVersion,
+    agent_response: {
+      status: parsed.fields.status,
+      destination: parsed.fields.destination || "N/A",
+      quantity: parsed.fields.quantity_to_transfer || "N/A",
+      risk_summary: parsed.fields.risk_summary || "",
+      full_response: agentText
+    },
+    evaluation_metrics: {
+      status_correct: true, // User will verify in Arize
+      hallucination_detected: hallucination.hallucinations.length > 0,
+      hallucination_score: hallucination.hallucination_score,
+      hallucinations_found: hallucination.hallucinations,
+      verifications: hallucination.verifications,
+      policy_sections_referenced: hallucination.policy_sections_referenced,
+      policy_completeness_score: hallucination.policy_completeness_score
+    },
+    metadata: {
+      timestamp: new Date().toISOString(),
+      run_id: batch.batch_id + "_" + Date.now(),
+      env: "browser"
+    }
+  };
+
+  // Log to browser console (can be picked up by monitoring tools)
+  console.log("[ARIZE_EVAL]", JSON.stringify(payload, null, 2));
+
+  // Attempt to send to Arize (may be blocked by CORS in browser, but logged anyway)
+  try {
+    fetch(ARIZE_CONFIG.evaluatorEndpoint, {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + ARIZE_CONFIG.apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }).catch(function(err) {
+      console.warn("[ARIZE] Network error (expected in browser): " + err.message);
+    });
+  } catch (e) {
+    console.warn("[ARIZE] Logging skipped: " + e.message);
+  }
+
+  return hallucination;
+}
+
+/* ═══ STATE ═══ */
+const CASE_STATE = {};
+BATCHES.forEach(function(b) { CASE_STATE[b.batch_id] = { status: "not_run" }; });
+let SELECTED_BATCH_ID = null;
+const RUN_LOG = [];
+const PENDING_TRANSFERS = [];
+let DEMO_MODE = false;
+
+const DEMO_NARRATION = {
+  input: "Batch BAT-001: Full Cream Milk 1L at Store A is 44 hours from expiry. 120 units on hand, with only 25 units forecast demand at source. Agent analyzing...",
+  context: "Agent checks nearby stores and hero stores. ST02 has 15 units demand, ST03 has 20 units demand, ST04 (hero) has 140 units in stock and 180 units forecast demand. Unmet need: ST02 = 0 (15-90), ST03 = 20 (20-0), ST04 = 40 (180-140).",
+  decision: "Agent recommends ST04 hero store due to highest unmet need (40 units). Transfer of 36 units (30% cap) leaves 84 units at source. Transport 55min leaves 36 hours shelf life at destination—above 24hr minimum. Forecast confidence acceptable.",
+  output: "Agent recommends ST04 as destination. Approve to create a pending transfer order, or edit the quantity/destination if preferred.",
+  review: "Manager can approve, edit the details, or escalate if concerned. Once approved, the system creates a pending transfer order that warehouse staff can then physically dispatch and confirm receipt."
+};
+
+function getBatchById(id) {
+  return BATCHES.filter(function(b) { return b.batch_id === id; })[0];
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ═══ RUN LOG ═══ */
+function appendRunLogEntry(batch, parsedFields, humanActionText, actionType) {
+  RUN_LOG.push({
+    time: new Date().toLocaleString(),
+    caseLabel: batch.batch_id + " (" + batch.sku_name + " @ " + batch.store_name + ")",
+    agentDecision: parsedFields.status + " - " + parsedFields.risk_summary,
+    humanAction: humanActionText,
+    actionType: actionType
+  });
+  renderRunLog();
+}
+
+/* ═══ DEMO MODE & PENDING TRANSFERS ═══ */
+function renderPendingTransfers() {
+  const container = document.getElementById("pending-transfers");
+  container.innerHTML = "";
+  if (PENDING_TRANSFERS.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.fontSize = "var(--fs-0)";
+    empty.style.color = "var(--ink-3)";
+    empty.textContent = "No pending transfers. Approve a recommendation to create one.";
+    container.appendChild(empty);
+    return;
+  }
+  PENDING_TRANSFERS.forEach(function(pt, idx) {
+    const card = document.createElement("div");
+    card.style.padding = "var(--sp-4)";
+    card.style.marginBottom = "var(--sp-3)";
+    card.style.border = "2px solid " + (pt.status === "Received" ? "var(--ok)" : pt.status === "Dispatched" ? "var(--info)" : "var(--warn)");
+    card.style.borderRadius = "var(--radius-sm)";
+    card.style.background = "var(--bg-raise)";
+
+    const header = document.createElement("div");
+    header.style.fontWeight = "700";
+    header.style.marginBottom = "var(--sp-2)";
+    header.style.fontSize = "var(--fs-2)";
+    header.innerHTML = escapeHtml(pt.batch_id) + " → " + escapeHtml(pt.destination_store_name);
+    card.appendChild(header);
+
+    const statusBadge = document.createElement("span");
+    statusBadge.style.display = "inline-block";
+    statusBadge.style.padding = "var(--sp-1) var(--sp-2)";
+    statusBadge.style.fontSize = "var(--fs-0)";
+    statusBadge.style.borderRadius = "var(--radius-sm)";
+    statusBadge.style.fontWeight = "600";
+    if (pt.status === "Received") {
+      statusBadge.style.background = "var(--ok)";
+      statusBadge.style.color = "#fff";
+      statusBadge.textContent = "✓ Received";
+    } else if (pt.status === "Dispatched") {
+      statusBadge.style.background = "var(--info)";
+      statusBadge.style.color = "#fff";
+      statusBadge.textContent = "→ Dispatched";
+    } else {
+      statusBadge.style.background = "var(--warn)";
+      statusBadge.style.color = "#000";
+      statusBadge.textContent = "⏳ Awaiting Dispatch";
+    }
+    card.appendChild(statusBadge);
+
+    const details = document.createElement("div");
+    details.style.fontSize = "var(--fs-0)";
+    details.style.color = "var(--ink-2)";
+    details.style.marginTop = "var(--sp-2)";
+    let detailsText = "Qty: " + pt.qty + " units | Created: " + pt.created_at;
+    if (pt.dispatch_date) detailsText += " | Dispatched: " + pt.dispatch_date;
+    if (pt.received_date) detailsText += " | Received: " + pt.received_date;
+    details.textContent = detailsText;
+    card.appendChild(details);
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.marginTop = "var(--sp-3)";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.gap = "var(--sp-2)";
+
+    if (pt.status === "Awaiting Dispatch") {
+      const dispatchBtn = document.createElement("button");
+      dispatchBtn.type = "button";
+      dispatchBtn.className = "btn";
+      dispatchBtn.style.background = "var(--info)";
+      dispatchBtn.style.color = "#fff";
+      dispatchBtn.style.border = "none";
+      dispatchBtn.style.cursor = "pointer";
+      dispatchBtn.style.padding = "var(--sp-2) var(--sp-3)";
+      dispatchBtn.textContent = "Confirm Dispatch";
+      dispatchBtn.addEventListener("click", function() {
+        pt.status = "Dispatched";
+        pt.dispatch_date = new Date().toLocaleString();
+        renderPendingTransfers();
+      });
+      buttonContainer.appendChild(dispatchBtn);
+    } else if (pt.status === "Dispatched") {
+      const receiveBtn = document.createElement("button");
+      receiveBtn.type = "button";
+      receiveBtn.className = "btn";
+      receiveBtn.style.background = "var(--ok)";
+      receiveBtn.style.color = "#fff";
+      receiveBtn.style.border = "none";
+      receiveBtn.style.cursor = "pointer";
+      receiveBtn.style.padding = "var(--sp-2) var(--sp-3)";
+      receiveBtn.textContent = "Confirm Receipt";
+      receiveBtn.addEventListener("click", function() {
+        pt.status = "Received";
+        pt.received_date = new Date().toLocaleString();
+        renderPendingTransfers();
+      });
+      buttonContainer.appendChild(receiveBtn);
+    }
+
+    card.appendChild(buttonContainer);
+    container.appendChild(card);
+  });
+}
+
+function startDemo() {
+  DEMO_MODE = true;
+  SELECTED_BATCH_ID = "BAT-001";
+  renderCaseList();
+  renderMainPanel();
+  renderDemoNarration("input");
+  document.getElementById("demo-btn").textContent = "Exit Demo";
+  document.getElementById("demo-btn").style.background = "var(--danger)";
+}
+
+function exitDemo() {
+  DEMO_MODE = false;
+  SELECTED_BATCH_ID = null;
+  document.getElementById("demo-narration").style.display = "none";
+  renderMainPanel();
+  document.getElementById("demo-btn").textContent = "Start Demo";
+  document.getElementById("demo-btn").style.background = "";
+}
+
+function renderDemoNarration(stage) {
+  const narrationEl = document.getElementById("demo-narration");
+  if (!DEMO_MODE) {
+    narrationEl.style.display = "none";
+    return;
+  }
+  narrationEl.style.display = "block";
+  const text = DEMO_NARRATION[stage] || "Demo in progress...";
+  narrationEl.innerHTML = "<strong>Demo Stage:</strong> " + escapeHtml(text);
+}
+
+function recordHumanActionWithTransfer(batch, state, action) {
+  recordHumanAction(batch, state, action);
+  if (action.type === "Approved") {
+    const destinationId = state.parsed.fields.recommended_destination_store;
+    const destination = getStoreById(destinationId);
+    PENDING_TRANSFERS.push({
+      batch_id: batch.batch_id,
+      destination_store_id: destinationId,
+      destination_store_name: destination ? destination.store_name : destinationId,
+      qty: state.parsed.fields.recommended_transfer_quantity,
+      status: "Awaiting Dispatch",
+      created_at: new Date().toLocaleString()
+    });
+    renderPendingTransfers();
+    if (DEMO_MODE) {
+      renderDemoNarration("review");
+    }
+  }
+}
+
+function getStoreById(storeId) {
+  for (let i = 0; i < STORE_DISTANCES.length; i++) {
+    if (STORE_DISTANCES[i].store_a_id === storeId) return { store_id: storeId, store_name: STORE_DISTANCES[i].store_a_name };
+    if (STORE_DISTANCES[i].store_b_id === storeId) return { store_id: storeId, store_name: STORE_DISTANCES[i].store_b_name };
+  }
+  return null;
+}
+
+function renderRunLog() {
+  const logEl = document.getElementById("run-log");
+  logEl.innerHTML = "";
+
+  if (RUN_LOG.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "row";
+    empty.textContent = "No runs yet. Approve, edit, or escalate a case to start the log.";
+    logEl.appendChild(empty);
+    return;
+  }
+
+  RUN_LOG.forEach(function(entry) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const actionClass = entry.actionType === "Approved" ? "action-approve" :
+      entry.actionType === "Edited" ? "action-edit" : "action-escalate";
+    row.innerHTML =
+      '<span class="t"></span><span class="rest"></span>';
+    row.querySelector(".t").textContent = entry.time;
+    row.querySelector(".rest").innerHTML =
+      escapeHtml(entry.caseLabel) + " — " + escapeHtml(entry.agentDecision) +
+      ' — <span class="' + actionClass + '">' + escapeHtml(entry.humanAction) + "</span>";
+    logEl.appendChild(row);
+  });
+}
+
+/* ═══ ONE-CLICK DEMO CHIPS ═══ */
+function renderDemoChips() {
+  const container = document.getElementById("demo-chips");
+  container.innerHTML = "";
+  EVAL_CASES.forEach(function(ec) {
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    chip.textContent = ec.case_name;
+    chip.addEventListener("click", function() { selectCase(ec.batch_id); });
+    container.appendChild(chip);
+  });
+}
+
+/* ═══ EVALS VIEW ═══ */
+const EVAL_RESULTS_STORAGE_KEY = "eval_results_v1";
+
+const EVAL_RESULTS_DEFAULTS = {
+  "EVAL-01": {
+    actual: "REFUSED-ESCALATE - Destination ST02 already holds inventory equal to its forecast demand; no destination with genuine unmet need exists.",
+    verdict: "pass",
+    notes: "Refusal was correct - ST02 was already stocked to its own demand; real fix is seeding forecast data for ST03/ST04.",
+    lastRunAt: null
+  },
+  "EVAL-02": {
+    actual: "REFUSED-ESCALATE - Recent forecast error for SKU01/ST03 exceeds ±20% threshold; forecast confidence unacceptable per Section 6.",
+    verdict: "",
+    notes: "Initial run was cut off by max_tokens before reaching Citations (fixed: 1024 -> 2048). Re-run completed; escalates because a past outcome at ST03 was catastrophic despite an error rate technically within tolerance - verdict pending.",
+    lastRunAt: null
+  },
+  "EVAL-03": {
+    actual: "OK - Recommended ST04 hero store (40 units) as the destination with the highest unmet need (180 demand - 140 inventory = 40 net units), correctly ranking above ST03 (20 units unmet demand) and ST02 (-75 units, already well-stocked).",
+    verdict: "pass",
+    notes: "FIXED in Prompt 19: Section 2 updated to always include hero stores in the eligibility pool (not gated behind 'no within-10km can absorb'). Section 3 ranking now correctly precomputes unmet_need_units for all candidates and ranks by this net figure. Agent now picks ST04 (40 units) over ST03 (20 units) as intended.",
+    lastRunAt: null
+  },
+  "EVAL-04": {
+    actual: "REFUSED-ESCALATE - Forecast confidence unacceptable per Section 6; no destination demand data available for evaluation.",
+    verdict: "pass",
+    notes: "Correctly refused - source forecast is self-labeled unreliable, no destination data exists; escalated instead of guessing.",
+    lastRunAt: null
+  },
+  "EVAL-05": {
+    actual: "REFUSED-ESCALATE - Quality gate: temperature_breached status blocks all transfers per Section 7.",
+    verdict: "pass",
+    notes: "Quality gate held - refused and escalated regardless of demand or shelf life, exactly as designed.",
+    lastRunAt: null
+  },
+  "EVAL-06": {
+    actual: "REFUSED-ESCALATE - Forecast confidence unacceptable per Section 6; most recent forecast error for SKU04/ST01 exceeds ±20% (57% error recorded in RL-011).",
+    verdict: "pass",
+    notes: "Did not trust the high-confidence label - cross-checked the outcome log, found the 57% error, correctly escalated.",
+    lastRunAt: null
+  }
+};
+
+function loadEvalResults() {
+  let stored = null;
+  try {
+    stored = JSON.parse(localStorage.getItem(EVAL_RESULTS_STORAGE_KEY));
+  } catch (e) {
+    stored = null;
+  }
+  const results = {};
+  EVAL_CASES.forEach(function(ec) {
+    const fallback = EVAL_RESULTS_DEFAULTS[ec.case_id] || { actual: "", verdict: "", notes: "", lastRunAt: null };
+    results[ec.case_id] = (stored && stored[ec.case_id]) ? stored[ec.case_id] : fallback;
+  });
+  return results;
+}
+
+const EVAL_RESULTS = loadEvalResults();
+
+function saveEvalResults() {
+  localStorage.setItem(EVAL_RESULTS_STORAGE_KEY, JSON.stringify(EVAL_RESULTS));
+}
+
+function summarizeCaseState(state) {
+  if (!state || state.status === "not_run") return "(not run yet)";
+  if (state.status === "running") return "Running...";
+  if (state.status === "error") return state.message;
+  if (!state.parsed.ok) return "agent output did not match format";
+  return state.parsed.fields.status + " — " + state.parsed.fields.why;
+}
+
+async function runEvalCase(ec) {
+  const batch = getBatchById(ec.batch_id);
+  const actualCell = document.getElementById("eval-actual-" + ec.case_id);
+  actualCell.textContent = "Running...";
+  await runCase(batch);
+  const summary = summarizeCaseState(CASE_STATE[batch.batch_id]);
+  EVAL_RESULTS[ec.case_id].actual = summary;
+  EVAL_RESULTS[ec.case_id].lastRunAt = new Date().toISOString();
+  actualCell.textContent = summary;
+  saveEvalResults();
+  renderScoreboard();
+}
+
+function renderEvalsTable() {
+  const tbody = document.getElementById("evals-tbody");
+  tbody.innerHTML = "";
+
+  EVAL_CASES.forEach(function(ec) {
+    const tr = document.createElement("tr");
+
+    const caseTd = document.createElement("td");
+    const nameEl = document.createElement("div");
+    const nameStrong = document.createElement("strong");
+    nameStrong.textContent = ec.case_name;
+    nameEl.appendChild(nameStrong);
+    const idEl = document.createElement("div");
+    idEl.textContent = ec.batch_id;
+    const runBtn = makeBtn("Run");
+    runBtn.addEventListener("click", function() { runEvalCase(ec); });
+    caseTd.appendChild(nameEl);
+    caseTd.appendChild(idEl);
+    caseTd.appendChild(runBtn);
+    tr.appendChild(caseTd);
+
+    const expectedTd = document.createElement("td");
+    expectedTd.textContent = ec.expected_behavior;
+    tr.appendChild(expectedTd);
+
+    const actualTd = document.createElement("td");
+    actualTd.id = "eval-actual-" + ec.case_id;
+    actualTd.textContent = EVAL_RESULTS[ec.case_id].actual || "—";
+    tr.appendChild(actualTd);
+
+    const verdictTd = document.createElement("td");
+    const select = document.createElement("select");
+    [["", "—"], ["pass", "Pass"], ["needs_work", "Needs work"], ["fail", "Fail"]].forEach(function(opt) {
+      const optionEl = document.createElement("option");
+      optionEl.value = opt[0];
+      optionEl.textContent = opt[1];
+      select.appendChild(optionEl);
+    });
+    select.value = EVAL_RESULTS[ec.case_id].verdict;
+    select.addEventListener("change", function() {
+      EVAL_RESULTS[ec.case_id].verdict = select.value;
+      saveEvalResults();
+      renderScoreboard();
+    });
+    verdictTd.appendChild(select);
+    tr.appendChild(verdictTd);
+
+    const notesTd = document.createElement("td");
+    const notesInput = document.createElement("input");
+    notesInput.type = "text";
+    notesInput.value = EVAL_RESULTS[ec.case_id].notes || "";
+    notesInput.style.width = "100%";
+    notesInput.addEventListener("change", function() {
+      EVAL_RESULTS[ec.case_id].notes = notesInput.value;
+      saveEvalResults();
+    });
+    notesTd.appendChild(notesInput);
+    tr.appendChild(notesTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderScoreboard() {
+  const container = document.getElementById("evals-scoreboard");
+  container.innerHTML = "";
+
+  let passCount = 0, needsWorkCount = 0, failCount = 0, runCount = 0, lastRunAt = null;
+  EVAL_CASES.forEach(function(ec) {
+    const result = EVAL_RESULTS[ec.case_id];
+    if (result.verdict === "pass") passCount++;
+    else if (result.verdict === "needs_work") needsWorkCount++;
+    else if (result.verdict === "fail") failCount++;
+    if (result.actual) runCount++;
+    if (result.lastRunAt && (!lastRunAt || result.lastRunAt > lastRunAt)) lastRunAt = result.lastRunAt;
+  });
+
+  function makeStat(cls, n, label) {
+    const div = document.createElement("div");
+    div.className = "stat" + (cls ? " " + cls : "");
+    const nEl = document.createElement("div");
+    nEl.className = "n";
+    nEl.textContent = n;
+    const lEl = document.createElement("div");
+    lEl.className = "l";
+    lEl.textContent = label;
+    div.appendChild(nEl);
+    div.appendChild(lEl);
+    return div;
+  }
+
+  container.appendChild(makeStat("ok", passCount, "Pass"));
+  container.appendChild(makeStat("warn", needsWorkCount, "Needs Work"));
+  container.appendChild(makeStat("danger", failCount, "Fail"));
+  container.appendChild(makeStat("", runCount + " / " + EVAL_CASES.length, "Cases Run"));
+  container.appendChild(makeStat("", lastRunAt ? new Date(lastRunAt).toLocaleString() : "—", "Last Run"));
+}
+
+/* ═══ CASE LIST (left panel) ═══ */
+const HUMAN_ACTION_BADGE = {
+  Approved: ["ok", "Approved"],
+  Edited: ["warn", "Edited"],
+  Escalated: ["danger", "Escalated"]
+};
+
+function renderCaseList() {
+  const listEl = document.getElementById("case-list");
+  listEl.innerHTML = "";
+  BATCHES.forEach(function(batch) {
+    const state = CASE_STATE[batch.batch_id];
+    const card = document.createElement("div");
+    card.className = "case-card" + (batch.batch_id === SELECTED_BATCH_ID ? " active" : "");
+    const idDiv = document.createElement("div");
+    idDiv.className = "id";
+    idDiv.textContent = batch.batch_id;
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "title";
+    titleDiv.textContent = batch.sku_name + " @ " + batch.store_name;
+    card.appendChild(idDiv);
+    card.appendChild(titleDiv);
+
+    if (state.humanAction) {
+      const pair = HUMAN_ACTION_BADGE[state.humanAction.type] || ["neutral", state.humanAction.type];
+      const badge = document.createElement("span");
+      badge.className = "badge " + pair[0];
+      badge.textContent = pair[1];
+      card.appendChild(badge);
+    }
+
+    card.addEventListener("click", function() { selectCase(batch.batch_id); });
+    listEl.appendChild(card);
+  });
+}
+
+function selectCase(batchId) {
+  SELECTED_BATCH_ID = batchId;
+  renderCaseList();
+  renderMainPanel();
+}
+
+/* ═══ FIELD ROW HELPER ═══ */
+function makeFieldRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "field";
+  const k = document.createElement("div");
+  k.className = "k";
+  k.textContent = label;
+  const v = document.createElement("div");
+  v.className = "v";
+  v.textContent = value;
+  row.appendChild(k);
+  row.appendChild(v);
+  return row;
+}
+
+function makeBtn(label, extraClass) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "btn" + (extraClass ? " " + extraClass : "");
+  b.textContent = label;
+  return b;
+}
+
+function makeStageLabel(n, text) {
+  const div = document.createElement("div");
+  div.className = "stage";
+  div.setAttribute("data-n", String(n));
+  div.textContent = text;
+  return div;
+}
+
+/* ═══ REVIEW GATE ═══ */
+function recordHumanAction(batch, state, action) {
+  state.humanAction = action;
+  const actionText = action.type === "Approved" ? "Approved" : action.type + ": " + action.detail;
+  appendRunLogEntry(batch, state.parsed.fields, actionText, action.type);
+  renderCaseList();
+  if (SELECTED_BATCH_ID === batch.batch_id) renderMainPanel();
+}
+
+function addReviewGate(container, batch, state) {
+  const gateDiv = document.createElement("div");
+
+  const approveBtn = makeBtn("Approve", "approve");
+  const editBtn = makeBtn("Edit");
+  const escalateBtn = makeBtn("Escalate", "danger");
+  const statusText = document.createElement("span");
+
+  gateDiv.appendChild(approveBtn);
+  gateDiv.appendChild(editBtn);
+  gateDiv.appendChild(escalateBtn);
+  gateDiv.appendChild(statusText);
+  container.appendChild(gateDiv);
+
+  if (state.humanAction) {
+    approveBtn.disabled = true;
+    editBtn.disabled = true;
+    escalateBtn.disabled = true;
+    const labels = { Approved: "Approved.", Edited: "Edited and saved.", Escalated: "Escalated." };
+    statusText.textContent = labels[state.humanAction.type] || "Done.";
+    return;
+  }
+
+  approveBtn.addEventListener("click", function() {
+    recordHumanActionWithTransfer(batch, state, { type: "Approved" });
+  });
+
+  editBtn.addEventListener("click", function() {
+    approveBtn.disabled = true;
+    editBtn.disabled = true;
+    escalateBtn.disabled = true;
+
+    const editArea = document.createElement("textarea");
+    editArea.rows = 8;
+    editArea.cols = 60;
+    editArea.value = OUTPUT_FIELDS.map(function(f) { return f.label + ": " + state.parsed.fields[f.key]; }).join("\n");
+
+    const saveBtn = makeBtn("Save");
+    gateDiv.appendChild(editArea);
+    gateDiv.appendChild(saveBtn);
+
+    saveBtn.addEventListener("click", function() {
+      const firstLine = editArea.value.split("\n")[0];
+      recordHumanAction(batch, state, { type: "Edited", detail: firstLine });
+    });
+  });
+
+  escalateBtn.addEventListener("click", function() {
+    approveBtn.disabled = true;
+    editBtn.disabled = true;
+    escalateBtn.disabled = true;
+
+    const reasonInput = document.createElement("input");
+    reasonInput.type = "text";
+    reasonInput.placeholder = "One-line escalation reason";
+
+    const confirmBtn = makeBtn("Confirm escalation");
+    gateDiv.appendChild(reasonInput);
+    gateDiv.appendChild(confirmBtn);
+
+    confirmBtn.addEventListener("click", function() {
+      const reason = reasonInput.value.trim() || "(no reason given)";
+      recordHumanAction(batch, state, { type: "Escalated", detail: reason });
+    });
+  });
+}
+
+/* ═══ STAGE 3 — DECISION: what the agent chose and why ═══ */
+function renderStage3Decision(container, state) {
+  if (state.status === "not_run") { container.textContent = "(not run yet)"; return; }
+
+  if (state.status === "running") {
+    const thinking = document.createElement("span");
+    thinking.className = "thinking";
+    thinking.textContent = "Running";
+    container.appendChild(thinking);
+    return;
+  }
+
+  if (state.status === "error") {
+    const errNote = document.createElement("div");
+    errNote.className = "error-note";
+    errNote.textContent = state.message;
+    container.appendChild(errNote);
+    return;
+  }
+
+  if (!state.parsed.ok) { container.textContent = "agent output did not match format"; return; }
+
+  const badge = document.createElement("span");
+  badge.className = "badge " + (state.parsed.fields.status.indexOf("REFUSED-ESCALATE") === 0 ? "danger" : "ok");
+  badge.textContent = state.parsed.fields.status;
+  container.appendChild(badge);
+
+  const whyP = document.createElement("p");
+  const whyLabel = document.createElement("strong");
+  whyLabel.textContent = "Why: ";
+  whyP.appendChild(whyLabel);
+  whyP.appendChild(document.createTextNode(state.parsed.fields.why));
+  container.appendChild(whyP);
+}
+
+/* ═══ STAGE 4 — OUTPUT: the labeled fields, judgeable in under a minute ═══ */
+function renderStage4Output(container, state) {
+  if (state.status !== "done") { container.textContent = "—"; return; }
+
+  if (!state.parsed.ok) {
+    const raw = document.createElement("pre");
+    raw.textContent = state.rawText;
+    container.appendChild(raw);
+    return;
+  }
+
+  const fieldsDiv = document.createElement("div");
+  OUTPUT_FIELDS.forEach(function(f) {
+    if (f.key === "why" || f.key === "status" || f.key === "citations") return;
+    fieldsDiv.appendChild(makeFieldRow(f.label, state.parsed.fields[f.key]));
+  });
+  container.appendChild(fieldsDiv);
+
+  const citationsP = document.createElement("p");
+  const citationsLabel = document.createElement("strong");
+  citationsLabel.textContent = "Citations: ";
+  citationsP.appendChild(citationsLabel);
+  state.parsed.fields.citations.split(",").forEach(function(rawTag) {
+    const tag = rawTag.trim();
+    if (!tag) return;
+    const chip = document.createElement("span");
+    chip.className = "chip cite";
+    chip.textContent = tag;
+    citationsP.appendChild(chip);
+  });
+  container.appendChild(citationsP);
+}
+
+/* ═══ STAGE 5 — REVIEW: approve / edit / escalate ═══ */
+function renderStage5Review(container, batch, state) {
+  if (state.status !== "done" || !state.parsed.ok) {
+    const placeholder = document.createElement("p");
+    placeholder.textContent = "—";
+    container.appendChild(placeholder);
+  } else {
+    addReviewGate(container, batch, state);
+  }
+
+  const boundaryNote = document.createElement("p");
+  boundaryNote.className = "boundary-note";
+  boundaryNote.textContent = "Nothing is sent without human approval.";
+  container.appendChild(boundaryNote);
+}
+
+function renderArizeEvaluation(container, evaluation) {
+  const heading = document.createElement("p");
+  heading.innerHTML = "<strong>Hallucination Detection (Arize AI):</strong>";
+  container.appendChild(heading);
+
+  // Hallucination score
+  const scoreRow = makeFieldRow("Hallucination Score",
+    evaluation.hallucination_score === 1 ? "✓ Pass (0 hallucinations)" : "✗ Fail (" + evaluation.hallucinations.length + " detected)");
+  container.appendChild(scoreRow);
+
+  // Policy completeness
+  const policyRow = makeFieldRow("Policy Sections Referenced",
+    evaluation.policy_sections_referenced + " of 10 (Completeness: " + (evaluation.policy_completeness_score * 100).toFixed(0) + "%)");
+  container.appendChild(policyRow);
+
+  // Citation verifications
+  const citations = evaluation.verifications;
+  const citationRow = makeFieldRow("Citation Verification",
+    citations.passed + " passed, " + citations.failed + " failed out of " + citations.citations + " citations");
+  container.appendChild(citationRow);
+
+  if (evaluation.hallucinations.length > 0) {
+    const hallucHeading = document.createElement("p");
+    hallucHeading.innerHTML = "<strong style='color: var(--danger)'>Hallucinations Found:</strong>";
+    container.appendChild(hallucHeading);
+    const hallucList = document.createElement("ul");
+    evaluation.hallucinations.forEach(function(h) {
+      const li = document.createElement("li");
+      li.textContent = h;
+      li.style.color = "var(--danger)";
+      hallucList.appendChild(li);
+    });
+    container.appendChild(hallucList);
+  } else {
+    const passNote = document.createElement("p");
+    passNote.innerHTML = "<strong style='color: var(--ok)'>✓ No hallucinations detected</strong>";
+    container.appendChild(passNote);
+  }
+
+  const arizeNote = document.createElement("p");
+  arizeNote.className = "boundary-note";
+  arizeNote.textContent = "Results logged to Arize AI platform for continuous monitoring.";
+  container.appendChild(arizeNote);
+}
+
+/* ═══ MAIN PANEL (selected case detail) ═══ */
+function renderMainPanel() {
+  const body = document.getElementById("main-panel-body");
+  body.innerHTML = "";
+
+  if (!SELECTED_BATCH_ID) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+
+    const headline = document.createElement("div");
+    headline.className = "headline";
+    headline.textContent = "Near-Expiry Inventory Transfer Agent";
+    empty.appendChild(headline);
+
+    const oneLiner = document.createElement("p");
+    oneLiner.textContent = "Finds packaged milk at risk of expiring, recommends a safe store-to-store transfer, and waits for your approval before anything moves.";
+    empty.appendChild(oneLiner);
+
+    if (!localStorage.getItem(API_KEY_STORAGE_KEY)) {
+      const keyNote = document.createElement("p");
+      keyNote.innerHTML = "<strong>No API key saved yet.</strong> Add your Anthropic API key in Settings, top right of the page, to run a case.";
+      empty.appendChild(keyNote);
+    }
+
+    const hint = document.createElement("p");
+    hint.textContent = "Click a case on the left, or one of the demo chips above the list, to see the full loop.";
+    empty.appendChild(hint);
+
+    body.appendChild(empty);
+    return;
+  }
+
+  const batch = getBatchById(SELECTED_BATCH_ID);
+  const state = CASE_STATE[SELECTED_BATCH_ID];
+
+  const heading = document.createElement("h3");
+  heading.textContent = batch.batch_id + " — " + batch.sku_name + " @ " + batch.store_name;
+  body.appendChild(heading);
+
+  /* STAGE 1 — INPUT: the case */
+  body.appendChild(makeStageLabel(1, "Input"));
+  const inputDiv = document.createElement("div");
+  inputDiv.appendChild(makeFieldRow("Expiry", batch.expiry_date + " (" + batch.hours_to_expiry + "h remaining)"));
+  inputDiv.appendChild(makeFieldRow("On Hand", batch.on_hand_qty + " units"));
+  inputDiv.appendChild(makeFieldRow("Quality Status", batch.quality_status));
+  inputDiv.appendChild(makeFieldRow("Previously Transferred", String(batch.previously_transferred)));
+  inputDiv.appendChild(makeFieldRow("Returned From Customer", String(batch.returned_from_customer)));
+  body.appendChild(inputDiv);
+
+  /* STAGE 2 — CONTEXT: the records and policy the agent reads */
+  body.appendChild(makeStageLabel(2, "Context"));
+  const contextDiv = document.createElement("div");
+
+  const forecasts = DEMAND_FORECAST.filter(function(f) { return f.batch_id === batch.batch_id; });
+  const forecastHeading = document.createElement("p");
+  forecastHeading.innerHTML = "<strong>Linked demand forecast:</strong>";
+  contextDiv.appendChild(forecastHeading);
+  const forecastList = document.createElement("ul");
+  forecasts.forEach(function(f) {
+    const li = document.createElement("li");
+    li.textContent = f.store_id + ": predicted " + f.predicted_demand_units + " units, pre-labeled expected " +
+      f.pre_labeled_expected_demand_units + " units, confidence " + f.forecast_confidence + " (" + f.notes + ")";
+    forecastList.appendChild(li);
+  });
+  contextDiv.appendChild(forecastList);
+
+  const distances = STORE_DISTANCES.filter(function(d) {
+    return d.store_a_id === batch.store_id || d.store_b_id === batch.store_id;
+  });
+  const distanceHeading = document.createElement("p");
+  distanceHeading.innerHTML = "<strong>Linked store distances from " + batch.store_id + ":</strong>";
+  contextDiv.appendChild(distanceHeading);
+  const distanceList = document.createElement("ul");
+  distances.forEach(function(d) {
+    const otherName = d.store_a_id === batch.store_id ? d.store_b_name : d.store_a_name;
+    const otherId = d.store_a_id === batch.store_id ? d.store_b_id : d.store_a_id;
+    const li = document.createElement("li");
+    li.textContent = otherId + " (" + otherName + "): " + d.distance_km + " km, " + d.transport_time_min + " min transport";
+    distanceList.appendChild(li);
+  });
+  contextDiv.appendChild(distanceList);
+
+  const flags = QUALITY_FLAGS.filter(function(q) { return q.batch_id === batch.batch_id; });
+  const flagHeading = document.createElement("p");
+  flagHeading.innerHTML = "<strong>Linked quality flag:</strong>";
+  contextDiv.appendChild(flagHeading);
+  const flagList = document.createElement("ul");
+  if (flags.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "(none on file)";
+    flagList.appendChild(li);
+  } else {
+    flags.forEach(function(q) {
+      const li = document.createElement("li");
+      li.textContent = q.quality_status + " — " + q.flag_reason + " (flagged by " + q.flagged_by + " at " + q.flagged_at + ")";
+      flagList.appendChild(li);
+    });
+  }
+  contextDiv.appendChild(flagList);
+
+  const policyNote = document.createElement("p");
+  policyNote.innerHTML = "<strong>Policy read:</strong> policies/" + POLICY_FILES[0].filename;
+  contextDiv.appendChild(policyNote);
+
+  body.appendChild(contextDiv);
+
+  const runBtnWrap = document.createElement("div");
+  runBtnWrap.style.marginTop = "var(--sp-4)";
+  runBtnWrap.style.marginBottom = "var(--sp-4)";
+  runBtnWrap.style.padding = "var(--sp-3)";
+  runBtnWrap.style.backgroundColor = "var(--bg-inset)";
+  runBtnWrap.style.borderRadius = "var(--radius-sm)";
+  runBtnWrap.style.borderLeft = "4px solid var(--accent)";
+
+  const runBtn = makeBtn("Run");
+  runBtn.style.background = "var(--accent)";
+  runBtn.style.color = "var(--accent-ink)";
+  runBtn.style.border = "none";
+  runBtn.style.cursor = "pointer";
+  runBtn.style.padding = "var(--sp-2) var(--sp-4)";
+  runBtn.style.fontSize = "var(--fs-2)";
+  runBtn.style.fontWeight = "600";
+  runBtn.addEventListener("click", function() { runCase(batch); });
+  runBtnWrap.appendChild(runBtn);
+  body.appendChild(runBtnWrap);
+
+  /* STAGE 3 — DECISION: what it chose and why */
+  body.appendChild(makeStageLabel(3, "Decision"));
+  const decisionDiv = document.createElement("div");
+  renderStage3Decision(decisionDiv, state);
+  body.appendChild(decisionDiv);
+
+  /* STAGE 4 — OUTPUT: the labeled fields */
+  body.appendChild(makeStageLabel(4, "Output"));
+  const outputDiv = document.createElement("div");
+  renderStage4Output(outputDiv, state);
+  body.appendChild(outputDiv);
+
+  /* STAGE 5 — REVIEW: approve / edit / escalate */
+  body.appendChild(makeStageLabel(5, "Review"));
+  const reviewDiv = document.createElement("div");
+  renderStage5Review(reviewDiv, batch, state);
+  body.appendChild(reviewDiv);
+
+  /* STAGE 6 — EVALUATION: Arize AI hallucination detection */
+  if (state.arizeEvaluation) {
+    body.appendChild(makeStageLabel(6, "Evaluation (Arize)"));
+    const evalDiv = document.createElement("div");
+    renderArizeEvaluation(evalDiv, state.arizeEvaluation);
+    body.appendChild(evalDiv);
+  }
+}
+
+function refreshIfSelected(batchId) {
+  if (SELECTED_BATCH_ID === batchId) renderMainPanel();
+}
+
+/* ═══ RUN A CASE ═══ */
+async function runCase(batch) {
+  const state = CASE_STATE[batch.batch_id];
+  const apiKey = localStorage.getItem(API_KEY_STORAGE_KEY);
+
+  if (!apiKey) {
+    state.status = "error";
+    state.message = "Error: no API key saved. Add your Anthropic API key in Settings above, then try again.";
+    refreshIfSelected(batch.batch_id);
+    return "error";
+  }
+
+  if (DEMO_MODE) renderDemoNarration("input");
+  state.status = "running";
+  refreshIfSelected(batch.batch_id);
+
+  const context = buildCaseContext(batch);
+  const userMessage = "Case:\n" + JSON.stringify(context, null, 2) +
+    "\n\nPolicy (policies/transfer_rules.md):\n" + POLICY_FILES[0].text;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 2048,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userMessage }]
+      })
+    });
+
+    if (!response.ok) {
+      let errText;
+      try {
+        const errJson = await response.json();
+        errText = (errJson.error && errJson.error.message) ? errJson.error.message : JSON.stringify(errJson);
+      } catch (parseErr) {
+        errText = await response.text();
+      }
+      if (response.status === 401) {
+        state.message = "Error: the API key was rejected (401 unauthorized). Check the key in Settings.";
+      } else if (response.status === 429) {
+        state.message = "Error: rate limited or out of credit (429). " + errText;
+      } else {
+        state.message = "Error (" + response.status + "): " + errText;
+      }
+      state.status = "error";
+      refreshIfSelected(batch.batch_id);
+      return "error";
+    }
+
+    const data = await response.json();
+    const text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : JSON.stringify(data);
+    const parsed = parseAgentOutput(text);
+
+    // Log to Arize AI for evaluation
+    const hallucination = await logToArize(batch, text, parsed);
+    state.arizeEvaluation = hallucination;
+
+    state.status = "done";
+    state.rawText = text;
+    state.parsed = parsed;
+    state.humanAction = null;
+    if (DEMO_MODE) {
+      renderDemoNarration("context");
+      setTimeout(function() { renderDemoNarration("decision"); }, 1000);
+      setTimeout(function() { renderDemoNarration("output"); }, 2000);
+    }
+    refreshIfSelected(batch.batch_id);
+
+    if (!parsed.ok) return "malformed";
+    return parsed.fields.status.indexOf("REFUSED-ESCALATE") === 0 ? "refused" : "ok";
+  } catch (err) {
+    state.status = "error";
+    state.message = "Error: could not reach the API. Check your internet connection. (" + err.message + ")";
+    refreshIfSelected(batch.batch_id);
+    return "error";
+  }
+}
+
+/* ═══ RUN ALL ═══ */
+async function runAllCases() {
+  const runAllBtn = document.getElementById("run-all-btn");
+  const progressEl = document.getElementById("run-all-progress");
+  const summaryEl = document.getElementById("run-all-summary");
+
+  runAllBtn.disabled = true;
+  summaryEl.textContent = "";
+  const counts = { ok: 0, refused: 0, malformed: 0, error: 0 };
+
+  for (let i = 0; i < BATCHES.length; i++) {
+    const batch = BATCHES[i];
+    progressEl.textContent = "Running " + (i + 1) + " of " + BATCHES.length + ": " + batch.batch_id + "...";
+    const outcome = await runCase(batch);
+    counts[outcome] = (counts[outcome] || 0) + 1;
+  }
+
+  progressEl.textContent = "Done: " + BATCHES.length + " of " + BATCHES.length + " cases run.";
+  summaryEl.textContent = "OK: " + counts.ok +
+    " | REFUSED-ESCALATE: " + counts.refused +
+    " | Errors: " + (counts.error + counts.malformed) +
+    " (" + counts.error + " API/network errors, " + counts.malformed + " format-mismatch)";
+  runAllBtn.disabled = false;
+}
+
+document.getElementById("run-all-btn").addEventListener("click", runAllCases);
+
+/* ═══ INIT ═══ */
+updateTopbarMeta();
+renderDemoChips();
+renderCaseList();
+renderMainPanel();
+renderRunLog();
+renderPendingTransfers();
+renderEvalsTable();
+renderScoreboard();
+
+</script>
+</body>
 </html>

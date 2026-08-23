@@ -1,0 +1,9 @@
+transfer_id,transfer_date,sku_id,source_store_id,destination_store_id,qty_transferred,resulting_batch_id,outcome,units_sold,units_expired,notes
+TH-001,2026-07-11,SKU02,ST01,ST02,40,BAT-008,sold,38,2,Arrived with 96h shelf life remaining; sold out within 4 days. This is why BAT-008 is flagged previously_transferred.
+TH-002,2026-06-30,SKU01,ST03,ST01,25,HIST-B012,sold,25,0,Full sell-through before expiry.
+TH-003,2026-06-25,SKU03,ST04,ST02,50,HIST-B009,partial,41,9,Demand softer than forecast; 9 units expired at destination.
+TH-004,2026-06-18,SKU05,ST01,ST04,30,HIST-B005,sold,30,0,Hero-store transfer cleared quickly.
+TH-005,2026-06-10,SKU04,ST02,ST03,20,HIST-B002,rejected,0,0,Manager rejected - destination already had excess stock of the same SKU.
+TH-006,2026-06-02,SKU02,ST03,ST01,35,HIST-B014,sold,33,2,Minor residual expiry.
+TH-007,2026-05-28,SKU01,ST01,ST03,45,HIST-B007,expired,0,45,Approved late; shelf life after arrival was only 10 hours. This past mistake is why the 24-hour-after-arrival rule now exists.
+TH-008,2026-05-20,SKU03,ST02,ST04,60,HIST-B011,sold,55,5,Hero-store transfer, mostly sold through.

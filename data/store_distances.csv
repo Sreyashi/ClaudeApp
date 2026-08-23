@@ -1,0 +1,7 @@
+store_a_id,store_a_name,store_b_id,store_b_name,distance_km,transport_time_min
+ST01,Store A - Koramangala,ST02,Store B - HSR Layout,4.2,18
+ST01,Store A - Koramangala,ST03,Store C - BTM Layout,7.8,32
+ST01,Store A - Koramangala,ST04,Store D - Whitefield (Hero),22.5,55
+ST02,Store B - HSR Layout,ST03,Store C - BTM Layout,6.5,27
+ST02,Store B - HSR Layout,ST04,Store D - Whitefield (Hero),20.1,50
+ST03,Store C - BTM Layout,ST04,Store D - Whitefield (Hero),18.9,48
